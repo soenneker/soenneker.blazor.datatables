@@ -1,0 +1,90 @@
+﻿@page "/performance"
+@using Microsoft.Extensions.Logging
+@using Soenneker.Blazor.DataTables.Demo.Dtos
+
+@inject ILogger<Index> Logger
+@inject HttpClient Http
+
+<img src="https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png" />
+<h1>Soenneker.Blazor.DataTables demo</h1>
+<p>This page demonstrates some of the uses of the DataTables component.</p>
+
+<DataTable>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Office</th>
+            <th>Age</th>
+            <th>Start date</th>
+            <th>Salary</th>
+            <th>Link</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Employee employee in employees)
+        {
+            <tr>
+                <td>@employee.Name</td>
+                <td>@employee.Position</td>
+                <td>@employee.Office</td>
+                <td>@employee.Age</td>
+                <td>@employee.StartDate</td>
+                <td>@employee.Salary</td>
+                <td>
+                    <Anchor To=@("/") >Link</Anchor>
+                </td>
+            </tr>
+        }
+    </tbody>
+</DataTable>
+
+<br />
+
+<NavLink href="/" >Go to first page</NavLink>
+<hr />
+
+@code{
+    List<Employee> employees = new List<Employee>();
+
+    private DataTable _DataTable = default!;
+
+    private bool _render = true;
+    private bool _renderData = true;
+
+    protected override void OnInitialized()
+    {
+        for (int i = 0; i < 500; i++)
+        {
+            employees.Add(new Employee {Name = "John Doe", Position = "Developer", Office = "London", Age = 28, StartDate = DateTime.UtcNow, Salary = 320800});
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    private async Task OpenModal()
+    {
+    }
+
+    private void OnDataTableInitialized()
+    {
+        Logger.LogInformation("OnInitialized called");
+    }
+
+    private void ClearViaData()
+    {
+    }
+
+    private void Render()
+    {
+        _render = !_render;
+    }
+
+    private void RenderData()
+    {
+        _renderData = !_renderData;
+    }
+
+}

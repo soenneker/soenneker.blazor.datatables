@@ -1,0 +1,6 @@
+﻿@inherits Soenneker.Blazor.DataTables.Base.BaseDataTable
+@implements Soenneker.Blazor.DataTables.Abstract.IDataTable
+
+<table id="@ElementId" @ref="ElementReference" @attributes="Attributes" >
+    @ChildContent
+</table>

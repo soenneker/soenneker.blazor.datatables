@@ -1,0 +1,46 @@
+﻿@using System.Threading
+@using Microsoft.Extensions.Logging
+@using Soenneker.Blazor.DataTables.Abstract
+@using Soenneker.Blazor.Utils.InteropEventListener.Abstract
+
+@* ReSharper disable InconsistentNaming *@
+@inject IDataTablesInterop _dataTablesInterop
+@inject IInteropEventListener _interopEventListener
+@inject ILogger<BaseDataTable> _logger
+@* ReSharper restore InconsistentNaming *@
+
+@code {
+    #region Events
+
+    [Parameter]
+    public EventCallback OnInitialize { get; set; }
+
+    [Parameter]
+    public EventCallback OnDestroy { get; set; }
+
+    [Parameter]
+    public bool Debug { get; set; }
+
+    #endregion Events
+
+    protected override void OnInitialized()
+    {
+        InteropEventListener = _interopEventListener;
+        DataTablesInterop = _dataTablesInterop;
+        Logger = _logger;
+
+        base.OnInitialized();
+    }
+
+    public virtual ValueTask Reinitialize()
+    {
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask Destroy(CancellationToken cancellationToken = default)
+    {
+        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, CTs.Token);
+        return DataTablesInterop.Destroy(ElementReference, linkedCts.Token);
+    }
+
+}

@@ -1,0 +1,104 @@
+﻿@page "/"
+@using Microsoft.Extensions.Logging
+@using Soenneker.Utils.AutoBogus
+
+@inject ILogger<Index> Logger
+@inject HttpClient Http
+
+<img src="https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png" />
+<h1>Soenneker.Blazor.DataTables demo</h1>
+<p>This page demonstrates some of the uses of the DataTables component.</p>
+
+<DataTable>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Office</th>
+            <th>Age</th>
+            <th>Start date</th>
+            <th>Salary</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+            <td>John Doe</td>
+            <td>Developer</td>
+            <td>London</td>
+            <td>28</td>
+            <td>2017/04/25</td>
+            <td>$320,800</td>
+        </tr>
+        <tr>
+            <td>Jane Smith</td>
+            <td>Marketing Manager</td>
+            <td>New York</td>
+            <td>35</td>
+            <td>2015/08/19</td>
+            <td>$420,500</td>
+        </tr>
+        <tr>
+            <td>Michael Johnson</td>
+            <td>Sales Executive</td>
+            <td>San Francisco</td>
+            <td>30</td>
+            <td>2018/11/12</td>
+            <td>$310,000</td>
+        </tr>
+
+    </tbody>
+</DataTable>
+
+<br />
+
+<button @onclick="Render" >Render</button>
+<button @onclick="RenderData" >RenderData</button>
+<button @onclick="ClearViaData" >ClearViaData</button>
+
+<button @onclick="OpenModal" >Open Modal</button>
+<NavLink href="/performance" >Go to performance</NavLink>
+<hr />
+
+@code{
+
+    private AutoFaker _autoFaker = default!;
+
+    private DataTable _DataTable = default!;
+
+    private bool _render = true;
+    private bool _renderData = true;
+
+    protected override void OnInitialized()
+    {
+        _autoFaker = new AutoFaker();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    private async Task OpenModal()
+    {
+    }
+
+    private void OnDataTableInitialized()
+    {
+        Logger.LogInformation("OnInitialized called");
+    }
+
+    private void ClearViaData()
+    {
+    }
+
+    private void Render()
+    {
+        _render = !_render;
+    }
+
+    private void RenderData()
+    {
+        _renderData = !_renderData;
+    }
+
+}
