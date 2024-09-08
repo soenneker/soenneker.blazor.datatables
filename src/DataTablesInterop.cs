@@ -7,10 +7,10 @@ using Soenneker.Utils.AsyncSingleton;
 using Soenneker.Extensions.ValueTask;
 using System.Threading;
 using Microsoft.AspNetCore.Components;
-using Soenneker.Blazor.DataTables.Configuration;
 using Soenneker.Utils.Json;
 using System;
 using Soenneker.Blazor.DataTables.Base;
+using Soenneker.Blazor.DataTables.Configuration;
 
 namespace Soenneker.Blazor.DataTables;
 
@@ -42,7 +42,7 @@ public class DataTablesInterop: EventListeningInterop, IDataTablesInterop
         return JsRuntime.InvokeVoidAsync("DataTablesInterop.createObserver", cancellationToken, elementReference, elementId);
     }
 
-    public async ValueTask Create(ElementReference elementReference, string elementId, DotNetObjectReference<BaseDataTable> dotNetObjectRef, DataTablesConfiguration? configuration = null,
+    public async ValueTask Create(ElementReference elementReference, string elementId, DotNetObjectReference<BaseDataTable> dotNetObjectRef, DataTableOptions? configuration = null,
         CancellationToken cancellationToken = default)
     {
         await _scriptInitializer.Get(cancellationToken).NoSync();

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using Soenneker.Blazor.DataTables.Configuration;
 using Soenneker.Extensions.ValueTask;
 using System;
 using System.Threading;
@@ -8,6 +7,7 @@ using System.Threading.Tasks;
 using Soenneker.Blazor.DataTables.Base;
 using Soenneker.Extensions.String;
 using System.Collections.Generic;
+using Soenneker.Blazor.DataTables.Configuration;
 
 namespace Soenneker.Blazor.DataTables;
 
@@ -17,7 +17,7 @@ public partial class DataTable : BaseDataTable
     public Dictionary<string, object?>? Attributes { get; set; }
 
     [Parameter]
-    public DataTablesConfiguration Configuration { get; set; } = new();
+    public DataTableOptions Options { get; set; } = new();
 
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
@@ -36,15 +36,15 @@ public partial class DataTable : BaseDataTable
         }
     }
 
-    public async ValueTask Initialize(DataTablesConfiguration? configuration = null, CancellationToken cancellationToken = default)
+    public async ValueTask Initialize(DataTableOptions? configuration = null, CancellationToken cancellationToken = default)
     {
         if (configuration != null)
-            Configuration = configuration;
+            Options = configuration;
 
         DotNetReference = DotNetObjectReference.Create((BaseDataTable)this);
 
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, CTs.Token);
-        await DataTablesInterop.Create(ElementReference, ElementId, DotNetReference, Configuration, linkedCts.Token);
+        await DataTablesInterop.Create(ElementReference, ElementId, DotNetReference, Options, linkedCts.Token);
         await DataTablesInterop.CreateObserver(ElementReference, ElementId, cancellationToken);
 
         await AddEventListeners().NoSync();

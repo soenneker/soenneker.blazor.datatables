@@ -9,17 +9,15 @@ export class DataTablesInterop {
 
         if (options) {
             const opt = JSON.parse(options);
-            opt.onInitialize = () => dotNetCallback.invokeMethodAsync("OnInitializedJs");
+            opt.initComplete = (settings, json) => dotNetCallback.invokeMethodAsync("OnInitializedJs");
 
             _datatable = new DataTable('#' + elementId, options);
 
             this.options[elementId] = opt;
         } else {
-            _datatable = new DataTable('#' + elementId);
-
-            //_datatable = new DataTable(element, {
-            //    onInitialize: () => dotNetCallback.invokeMethodAsync("OnInitializedJs")
-            //});
+            _datatable = new DataTable('#' + elementId, {
+                initComplete: (settings, json) => dotNetCallback.invokeMethodAsync("OnInitializedJs")
+            });
         }
 
         this.datatables[elementId] = _datatable;
