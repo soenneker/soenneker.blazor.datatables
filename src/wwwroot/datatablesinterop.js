@@ -28,7 +28,7 @@ export class DataTablesInterop {
         this.datatables[elementId] = _datatable;
     }
 
-    async destroy(element) {
+    destroy(element) {
         const elementId = element.id;
         const dataTable = this.datatables[elementId];
 
