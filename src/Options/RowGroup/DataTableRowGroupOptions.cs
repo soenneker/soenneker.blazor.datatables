@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Soenneker.Blazor.DataTables.Configuration.RowGroup;
+namespace Soenneker.Blazor.DataTables.Options.RowGroup;
 
 public class DataTableRowGroupOptions
 {

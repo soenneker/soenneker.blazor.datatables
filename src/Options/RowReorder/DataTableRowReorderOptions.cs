@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Soenneker.Blazor.DataTables.Configuration.RowReorder;
+namespace Soenneker.Blazor.DataTables.Options.RowReorder;
 
 public class DataTableRowReorderOptions
 {

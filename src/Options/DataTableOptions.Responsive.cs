@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using Soenneker.Blazor.DataTables.Configuration.Responsive;
+using Soenneker.Blazor.DataTables.Options.Responsive;
 
-namespace Soenneker.Blazor.DataTables.Configuration;
+namespace Soenneker.Blazor.DataTables.Options;
 
 public partial class DataTableOptions
 {

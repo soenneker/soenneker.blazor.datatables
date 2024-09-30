@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Components;
 using Soenneker.Utils.Json;
 using System;
 using Soenneker.Blazor.DataTables.Base;
-using Soenneker.Blazor.DataTables.Configuration;
+using Soenneker.Blazor.DataTables.Options;
 
 namespace Soenneker.Blazor.DataTables;
 
@@ -60,10 +60,12 @@ public class DataTablesInterop: EventListeningInterop, IDataTablesInterop
         return JsRuntime.InvokeVoidAsync("DataTablesInterop.destroy", cancellationToken, elementReference);
     }
 
-    public ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         GC.SuppressFinalize(this);
 
-        return _resourceLoader.DisposeModule("Soenneker.Blazor.DataTables/datatablesinterop.js");
+        await _resourceLoader.DisposeModule("Soenneker.Blazor.DataTables/datatablesinterop.js").NoSync();
+
+        await _scriptInitializer.DisposeAsync().NoSync();
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Soenneker.Blazor.DataTables.Base;
 using Soenneker.Extensions.String;
 using System.Collections.Generic;
-using Soenneker.Blazor.DataTables.Configuration;
+using Soenneker.Blazor.DataTables.Options;
 
 namespace Soenneker.Blazor.DataTables;
 

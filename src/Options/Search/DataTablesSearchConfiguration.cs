@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Soenneker.Blazor.DataTables.Configuration.Search;
+namespace Soenneker.Blazor.DataTables.Options.Search;
 
 public class DataTablesSearchConfiguration
 {

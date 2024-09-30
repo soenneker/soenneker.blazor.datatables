@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using Soenneker.Blazor.DataTables.Configuration.Buttons;
-using Soenneker.Blazor.DataTables.Configuration.Language;
-using Soenneker.Blazor.DataTables.Configuration.RowGroup;
-using Soenneker.Blazor.DataTables.Configuration.RowReorder;
-using Soenneker.Blazor.DataTables.Configuration.Search;
+using Soenneker.Blazor.DataTables.Options.Language;
+using Soenneker.Blazor.DataTables.Options.RowGroup;
+using Soenneker.Blazor.DataTables.Options.RowReorder;
+using Soenneker.Blazor.DataTables.Options.Search;
 
-namespace Soenneker.Blazor.DataTables.Configuration;
+namespace Soenneker.Blazor.DataTables.Options;
 
 public partial class DataTableOptions
 {
@@ -19,8 +18,8 @@ public partial class DataTableOptions
     /// <summary>
     /// Destroy any existing table matching the selector and replace it with new options.
     /// </summary>
-    [JsonPropertyName("destroy")]
-    public bool? Destroy { get; set; }
+    //[JsonPropertyName("destroy")]
+    //public bool? Destroy { get; set; }
 
     /// <summary>
     /// Initial paging start point.

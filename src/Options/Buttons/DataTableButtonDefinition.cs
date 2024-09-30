@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Soenneker.Blazor.DataTables.Configuration.Buttons;
+namespace Soenneker.Blazor.DataTables.Options.Buttons;
 
 public class DataTableButtonDefinition
 {

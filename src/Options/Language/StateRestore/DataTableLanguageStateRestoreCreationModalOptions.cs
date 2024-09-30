@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Soenneker.Blazor.DataTables.Configuration.Language.StateRestore
+namespace Soenneker.Blazor.DataTables.Options.Language.StateRestore
 {
     public class DataTablesLanguageStateRestoreCreationModalOptions
     {

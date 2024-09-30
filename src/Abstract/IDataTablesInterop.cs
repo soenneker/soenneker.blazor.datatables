@@ -5,7 +5,7 @@ using System.Threading;
 using Soenneker.Blazor.Utils.EventListeningInterop.Abstract;
 using System;
 using Soenneker.Blazor.DataTables.Base;
-using Soenneker.Blazor.DataTables.Configuration;
+using Soenneker.Blazor.DataTables.Options;
 
 namespace Soenneker.Blazor.DataTables.Abstract;
 

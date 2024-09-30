@@ -1,8 +1,7 @@
 ﻿@page "/"
 @using Microsoft.Extensions.Logging
-@using Soenneker.Blazor.DataTables.Configuration
-@using Soenneker.Blazor.DataTables.Configuration.Buttons
-@using Soenneker.Blazor.DataTables.Configuration.Language
+@using Soenneker.Blazor.DataTables.Options
+@using Soenneker.Blazor.DataTables.Options.Language
 @using Soenneker.Utils.AutoBogus
 
 @inject ILogger<Index> Logger
@@ -13,7 +12,7 @@
 
 <Card>
     <CardBody>
-        <DataTable Options="_options" Class="table table-sm dt-responsive table-striped" style="width: 100%" >
+        <DataTable Options="_options" Class="table table-sm dt-responsive table-striped" style="width: 100%" OnInitialize="OnDataTableInitialized">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -116,7 +115,7 @@
 
     private void OnDataTableInitialized()
     {
-        Logger.LogInformation("OnInitialized called");
+        Logger.LogInformation("OnInitialize called");
     }
 
     private void ClearViaData()

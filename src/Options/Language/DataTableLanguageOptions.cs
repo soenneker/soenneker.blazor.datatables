@@ -1,10 +1,9 @@
 ﻿using System.Text.Json.Serialization;
-using Soenneker.Blazor.DataTables.Configuration.Language.Aria;
-using Soenneker.Blazor.DataTables.Configuration.Language.Buttons;
-using Soenneker.Blazor.DataTables.Configuration.Language.Paginate;
-using Soenneker.Blazor.DataTables.Configuration.Language.StateRestore;
+using Soenneker.Blazor.DataTables.Options.Language.Aria;
+using Soenneker.Blazor.DataTables.Options.Language.Paginate;
+using Soenneker.Blazor.DataTables.Options.Language.StateRestore;
 
-namespace Soenneker.Blazor.DataTables.Configuration.Language;
+namespace Soenneker.Blazor.DataTables.Options.Language;
 
 public class DataTableLanguageOptions
 {

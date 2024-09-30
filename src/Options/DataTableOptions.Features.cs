@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Soenneker.Blazor.DataTables.Configuration;
+namespace Soenneker.Blazor.DataTables.Options;
 
 public partial class DataTableOptions
 {

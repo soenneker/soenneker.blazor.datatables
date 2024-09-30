@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Soenneker.Blazor.DataTables.Configuration.Language.Aria;
+namespace Soenneker.Blazor.DataTables.Options.Language.Aria;
 
 public class DataTableLanguageAriaOptions
 {

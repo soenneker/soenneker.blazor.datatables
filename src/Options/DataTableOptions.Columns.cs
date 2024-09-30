@@ -1,8 +1,8 @@
-﻿using Soenneker.Blazor.DataTables.Configuration.Columns;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using Soenneker.Blazor.DataTables.Options.Columns;
 
-namespace Soenneker.Blazor.DataTables.Configuration;
+namespace Soenneker.Blazor.DataTables.Options;
 
 public partial class DataTableOptions
 {

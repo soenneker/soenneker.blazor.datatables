@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Soenneker.Blazor.DataTables.Configuration.Language.Paginate;
+namespace Soenneker.Blazor.DataTables.Options.Language.Paginate;
 
 public class DataTableLanguagePaginateOptions
 {

@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Soenneker.Blazor.DataTables.Configuration;
+using Soenneker.Blazor.DataTables.Options;
 
 namespace Soenneker.Blazor.DataTables.Abstract;
 

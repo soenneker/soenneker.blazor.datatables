@@ -4,49 +4,54 @@ export class DataTablesInterop {
         this.options = {};
     }
 
-    create(element, elementId, options, dotNetCallback) {
+    async create(element, elementId, options, dotNetCallback) {
         let _datatable;
 
         if (options) {
             const opt = JSON.parse(options);
-            opt.initComplete = (settings, json) => dotNetCallback.invokeMethodAsync("OnInitializedJs");
 
-            _datatable = new DataTable('#' + elementId, options);
+            opt.initComplete = async (settings, json) => {
+                await dotNetCallback.invokeMethodAsync("OnInitializedJs");
+            };
+
+            _datatable = new DataTable('#' + elementId, opt);
 
             this.options[elementId] = opt;
         } else {
             _datatable = new DataTable('#' + elementId, {
-                initComplete: (settings, json) => dotNetCallback.invokeMethodAsync("OnInitializedJs")
+                initComplete: async (settings, json) => {
+                    await dotNetCallback.invokeMethodAsync("OnInitializedJs");
+                }
             });
         }
 
         this.datatables[elementId] = _datatable;
     }
 
-    destroy(element) {
-        var elementId = element.id;
+    async destroy(element) {
+        const elementId = element.id;
         const dataTable = this.datatables[elementId];
 
         if (dataTable) {
             dataTable.destroy();
             delete this.datatables[elementId];
 
-            var tableElement = document.getElementById(elementId);
+            const tableElement = document.getElementById(elementId);
 
             if (tableElement)
                 tableElement.remove();
         }
     }
 
-    addEventListener(elementId, eventName, dotNetCallback) {
+    async addEventListener(elementId, eventName, dotNetCallback) {
         const dataTable = this.datatables[elementId];
 
-        dataTable.on(eventName, (...args) => {
+        dataTable.on(eventName, async (...args) => {
             if (eventName === "item_select") {
-                return dotNetCallback.invokeMethodAsync("Invoke", args[0].textContent);
+                await dotNetCallback.invokeMethodAsync("Invoke", args[0].textContent);
             } else {
                 const json = this.getJsonFromArguments(...args);
-                return dotNetCallback.invokeMethodAsync("Invoke", json);
+                await dotNetCallback.invokeMethodAsync("Invoke", json);
             }
         });
     }

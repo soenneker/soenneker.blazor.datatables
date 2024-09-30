@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Soenneker.Blazor.DataTables.Configuration.Responsive;
+namespace Soenneker.Blazor.DataTables.Options.Responsive;
 
 public class DataTableResponsiveOptions
 {

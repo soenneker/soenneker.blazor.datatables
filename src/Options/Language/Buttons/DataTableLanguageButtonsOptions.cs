@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Soenneker.Blazor.DataTables.Configuration.Language.Buttons;
+namespace Soenneker.Blazor.DataTables.Options.Language.Buttons;
 
 public class DataTablesLanguageButtonsOptions
 {

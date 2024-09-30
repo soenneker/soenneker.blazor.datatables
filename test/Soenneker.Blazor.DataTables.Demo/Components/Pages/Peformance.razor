@@ -1,6 +1,8 @@
 ﻿@page "/performance"
 @using Microsoft.Extensions.Logging
 @using Soenneker.Blazor.DataTables.Demo.Dtos
+@using Soenneker.Blazor.DataTables.Options
+@using Soenneker.Blazor.DataTables.Options.Language
 
 @inject ILogger<Index> Logger
 @inject HttpClient Http
@@ -9,7 +11,7 @@
 <h1>Soenneker.Blazor.DataTables demo</h1>
 <p>This page demonstrates some of the uses of the DataTables component.</p>
 
-<DataTable>
+<DataTable Options="_options">
     <thead>
         <tr>
             <th>Name</th>
@@ -44,7 +46,11 @@
 <NavLink href="/" >Go to first page</NavLink>
 <hr />
 
-@code{
+@code
+{
+
+    DataTableOptions _options;
+
     List<Employee> employees = new List<Employee>();
 
     private DataTable _DataTable = default!;
@@ -58,6 +64,30 @@
         {
             employees.Add(new Employee {Name = "John Doe", Position = "Developer", Office = "London", Age = 28, StartDate = DateTime.UtcNow, Salary = 320800});
         }
+
+        _options = new DataTableOptions
+        {
+            Dom = "Bfrtip",
+            Searching = true,
+            LengthChange = false,
+            Info = false,
+            Paging = false,
+            Order = [new object[] {0, "asc"}],
+            OrderMulti = true,
+            Buttons = new List<object>
+            {
+                "copy",
+                "excel"
+            },
+            Language = new DataTableLanguageOptions()
+            {
+                Buttons = new
+                {
+                    copy = "<i class='fad fa-clipboard'></i>",
+                    excel = "<i class='fad fa-file-excel'></i>"
+                }    
+            }
+        };
     }
 
     protected override async Task OnInitializedAsync()
