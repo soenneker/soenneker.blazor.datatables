@@ -14,10 +14,12 @@ public static class DataTablesInteropRegistrar
     /// <summary>
     /// Adds <see cref="IDataTablesInterop"/> as a scoped service. <para/>
     /// </summary>
-    public static void AddDataTables(this IServiceCollection services)
+    public static IServiceCollection AddDataTablesInteropAsScoped(this IServiceCollection services)
     {
         services.AddResourceLoader();
         services.TryAddScoped<IDataTablesInterop, DataTablesInterop>();
         services.AddInteropEventListener();
+
+        return services;
     }
 }
