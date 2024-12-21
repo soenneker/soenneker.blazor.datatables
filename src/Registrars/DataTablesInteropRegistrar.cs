@@ -16,9 +16,9 @@ public static class DataTablesInteropRegistrar
     /// </summary>
     public static IServiceCollection AddDataTablesInteropAsScoped(this IServiceCollection services)
     {
-        services.AddResourceLoader();
+        services.AddResourceLoaderAsScoped();
+        services.AddInteropEventListenerAsScoped();
         services.TryAddScoped<IDataTablesInterop, DataTablesInterop>();
-        services.AddInteropEventListener();
 
         return services;
     }
