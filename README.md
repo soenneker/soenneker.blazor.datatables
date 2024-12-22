@@ -20,7 +20,7 @@ dotnet add package Soenneker.Blazor.DataTables
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
-    services.AddDataTables();
+    services.AddDataTablesInteropAsScoped();
 }
 ```
 
