@@ -41,7 +41,7 @@ public partial class DataTable : BaseDataTable
         if (configuration != null)
             Options = configuration;
 
-        DotNetReference = DotNetObjectReference.Create((BaseDataTable)this);
+        DotNetReference = DotNetObjectReference.Create<BaseDataTable>(this);
 
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, CTs.Token);
         await DataTablesInterop.Create(ElementReference, ElementId, DotNetReference, Options, linkedCts.Token);
