@@ -47,7 +47,7 @@ public partial class DataTable : BaseDataTable
         await DataTablesInterop.Create(ElementReference, ElementId, DotNetReference, Options, linkedCts.Token);
         await DataTablesInterop.CreateObserver(ElementReference, ElementId, cancellationToken);
 
-        await AddEventListeners().NoSync();
+        await AddEventListeners(linkedCts.Token).NoSync();
     }
 
     [JSInvokable("OnInitializedJs")]
@@ -57,13 +57,13 @@ public partial class DataTable : BaseDataTable
             await OnInitialize.InvokeAsync();
     }
 
-    private async ValueTask AddEventListeners()
+    private async ValueTask AddEventListeners(CancellationToken cancellationToken = default)
     {
         if (OnDestroy.HasDelegate)
         {
             await AddEventListener<string>(
                 GetJsEventName(nameof(OnDestroy)),
-                async e => { await OnDestroy.InvokeAsync(); });
+                async (str, token) => { await OnDestroy.InvokeAsync(); });
         }
     }
 
@@ -71,11 +71,10 @@ public partial class DataTable : BaseDataTable
     {
         // Remove first two characters
         string subStr = callback[2..];
-        string result = subStr.ToSnakeCaseFromPascal();
-        return result;
+        return subStr.ToSnakeCaseFromPascal();
     }
 
-    private ValueTask AddEventListener<T>(string eventName, Func<T, ValueTask> callback)
+    private ValueTask AddEventListener<T>(string eventName, Func<T, CancellationToken, ValueTask> callback)
     {
         return InteropEventListener.Add("DataTablesInterop.addEventListener", ElementId, eventName, callback, CTs.Token);
     }
