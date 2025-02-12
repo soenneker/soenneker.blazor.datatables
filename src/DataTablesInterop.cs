@@ -15,18 +15,19 @@ using Soenneker.Blazor.DataTables.Options;
 namespace Soenneker.Blazor.DataTables;
 
 /// <inheritdoc cref="IDataTablesInterop"/>
-public class DataTablesInterop: EventListeningInterop, IDataTablesInterop
+public class DataTablesInterop : EventListeningInterop, IDataTablesInterop
 {
     private readonly IResourceLoader _resourceLoader;
-    private readonly AsyncSingleton<object> _scriptInitializer;
+    private readonly AsyncSingleton _scriptInitializer;
 
     public DataTablesInterop(IJSRuntime jSRuntime, IResourceLoader resourceLoader) : base(jSRuntime)
     {
         _resourceLoader = resourceLoader;
 
-        _scriptInitializer = new AsyncSingleton<object>(async (token, _) =>
+        _scriptInitializer = new AsyncSingleton(async (token, _) =>
         {
-            await _resourceLoader.ImportModuleAndWaitUntilAvailable("Soenneker.Blazor.DataTables/datatablesinterop.js", "DataTablesInterop", 100, token).NoSync();
+            await _resourceLoader.ImportModuleAndWaitUntilAvailable("Soenneker.Blazor.DataTables/datatablesinterop.js", "DataTablesInterop", 100, token)
+                                 .NoSync();
 
             return new object();
         });
@@ -34,7 +35,8 @@ public class DataTablesInterop: EventListeningInterop, IDataTablesInterop
 
     public async ValueTask Initialize(CancellationToken cancellationToken = default)
     {
-        await _scriptInitializer.Get(cancellationToken).NoSync();
+        await _scriptInitializer.Init(cancellationToken)
+                                .NoSync();
     }
 
     public ValueTask CreateObserver(ElementReference elementReference, string elementId, CancellationToken cancellationToken = default)
@@ -45,14 +47,16 @@ public class DataTablesInterop: EventListeningInterop, IDataTablesInterop
     public async ValueTask Create(ElementReference elementReference, string elementId, DotNetObjectReference<BaseDataTable> dotNetObjectRef, DataTableOptions? configuration = null,
         CancellationToken cancellationToken = default)
     {
-        await _scriptInitializer.Get(cancellationToken).NoSync();
+        await _scriptInitializer.Init(cancellationToken)
+                                .NoSync();
 
         string? json = null;
 
         if (configuration != null)
             json = JsonUtil.Serialize(configuration);
 
-        await JsRuntime.InvokeVoidAsync("DataTablesInterop.create", cancellationToken, elementReference, elementId, json, dotNetObjectRef);
+        await JsRuntime.InvokeVoidAsync("DataTablesInterop.create", cancellationToken, elementReference, elementId, json, dotNetObjectRef)
+                       .NoSync();
     }
 
     public ValueTask Destroy(ElementReference elementReference, CancellationToken cancellationToken = default)
@@ -64,8 +68,10 @@ public class DataTablesInterop: EventListeningInterop, IDataTablesInterop
     {
         GC.SuppressFinalize(this);
 
-        await _resourceLoader.DisposeModule("Soenneker.Blazor.DataTables/datatablesinterop.js").NoSync();
+        await _resourceLoader.DisposeModule("Soenneker.Blazor.DataTables/datatablesinterop.js")
+                             .NoSync();
 
-        await _scriptInitializer.DisposeAsync().NoSync();
+        await _scriptInitializer.DisposeAsync()
+                                .NoSync();
     }
 }

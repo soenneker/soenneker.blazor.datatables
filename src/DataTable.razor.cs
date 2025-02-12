@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Soenneker.Blazor.DataTables.Base;
+using Soenneker.Blazor.DataTables.Options;
+using Soenneker.Extensions.String;
+using Soenneker.Extensions.Task;
 using Soenneker.Extensions.ValueTask;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Soenneker.Blazor.DataTables.Base;
-using Soenneker.Extensions.String;
-using System.Collections.Generic;
-using Soenneker.Blazor.DataTables.Options;
 
 namespace Soenneker.Blazor.DataTables;
 
@@ -24,7 +25,7 @@ public partial class DataTable : BaseDataTable
 
     protected override async Task OnInitializedAsync()
     {
-        await DataTablesInterop.Initialize();
+        await DataTablesInterop.Initialize().NoSync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -32,7 +33,7 @@ public partial class DataTable : BaseDataTable
         if (firstRender)
         {
             InteropEventListener.Initialize(DataTablesInterop);
-            await Initialize();
+            await Initialize().NoSync();
         }
     }
 
@@ -44,8 +45,8 @@ public partial class DataTable : BaseDataTable
         DotNetReference = DotNetObjectReference.Create<BaseDataTable>(this);
 
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, CTs.Token);
-        await DataTablesInterop.Create(ElementReference, ElementId, DotNetReference, Options, linkedCts.Token);
-        await DataTablesInterop.CreateObserver(ElementReference, ElementId, cancellationToken);
+        await DataTablesInterop.Create(ElementReference, ElementId, DotNetReference, Options, linkedCts.Token).NoSync();
+        await DataTablesInterop.CreateObserver(ElementReference, ElementId, cancellationToken).NoSync();
 
         await AddEventListeners(linkedCts.Token).NoSync();
     }
@@ -54,7 +55,7 @@ public partial class DataTable : BaseDataTable
     public async Task OnInitializedJs()
     {
         if (OnInitialize.HasDelegate)
-            await OnInitialize.InvokeAsync();
+            await OnInitialize.InvokeAsync().NoSync();
     }
 
     private async ValueTask AddEventListeners(CancellationToken cancellationToken = default)
@@ -63,7 +64,7 @@ public partial class DataTable : BaseDataTable
         {
             await AddEventListener<string>(
                 GetJsEventName(nameof(OnDestroy)),
-                async (_, _) => { await OnDestroy.InvokeAsync(); });
+                async _ => { await OnDestroy.InvokeAsync().NoSync(); });
         }
     }
 
@@ -74,7 +75,7 @@ public partial class DataTable : BaseDataTable
         return subStr.ToSnakeCaseFromPascal();
     }
 
-    private ValueTask AddEventListener<T>(string eventName, Func<T, CancellationToken, ValueTask> callback)
+    private ValueTask AddEventListener<T>(string eventName, Func<T, ValueTask> callback)
     {
         return InteropEventListener.Add("DataTablesInterop.addEventListener", ElementId, eventName, callback, CTs.Token);
     }
