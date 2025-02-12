@@ -64,7 +64,7 @@ public partial class DataTable : BaseDataTable
         {
             await AddEventListener<string>(
                 GetJsEventName(nameof(OnDestroy)),
-                async _ => { await OnDestroy.InvokeAsync().NoSync(); });
+                async _ => { await OnDestroy.InvokeAsync().NoSync(); }).NoSync();
         }
     }
 
