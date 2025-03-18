@@ -16,9 +16,9 @@ public partial class BaseDataTable : ComponentBase, IBaseDataTable
 { 
     protected DotNetObjectReference<BaseDataTable>? DotNetReference;
 
-    protected IDataTablesInterop DataTablesInterop = default!;
+    protected IDataTablesInterop DataTablesInterop = null!;
 
-    protected IInteropEventListener InteropEventListener = default!;
+    protected IInteropEventListener InteropEventListener = null!;
 
     /// <summary>
     /// The actual HTML element's id
@@ -29,7 +29,7 @@ public partial class BaseDataTable : ComponentBase, IBaseDataTable
 
     protected ElementReference ElementReference;
 
-    protected ILogger<BaseDataTable> Logger = default!;
+    protected ILogger<BaseDataTable> Logger = null!;
 
     /// <summary>
     /// Destroys the element.

@@ -23,6 +23,8 @@ public partial class DataTable : BaseDataTable
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
+    private bool _elementInitialized;
+
     protected override async Task OnInitializedAsync()
     {
         await DataTablesInterop.Initialize().NoSync();
@@ -33,6 +35,12 @@ public partial class DataTable : BaseDataTable
         if (firstRender)
         {
             InteropEventListener.Initialize(DataTablesInterop);
+        }
+
+        // This is needed because ElementReference may be null when inside a delayed render scenario
+        if (!_elementInitialized && ElementReference.Id.HasContent())
+        {
+            _elementInitialized = true;
             await Initialize().NoSync();
         }
     }
@@ -46,7 +54,7 @@ public partial class DataTable : BaseDataTable
 
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, CTs.Token);
         await DataTablesInterop.Create(ElementReference, ElementId, DotNetReference, Options, linkedCts.Token).NoSync();
-        await DataTablesInterop.CreateObserver(ElementReference, ElementId, cancellationToken).NoSync();
+        await DataTablesInterop.CreateObserver(ElementReference, ElementId, linkedCts.Token).NoSync();
 
         await AddEventListeners(linkedCts.Token).NoSync();
     }
@@ -62,9 +70,7 @@ public partial class DataTable : BaseDataTable
     {
         if (OnDestroy.HasDelegate)
         {
-            await AddEventListener<string>(
-                GetJsEventName(nameof(OnDestroy)),
-                async _ => { await OnDestroy.InvokeAsync().NoSync(); }).NoSync();
+            await AddEventListener<string>(GetJsEventName(nameof(OnDestroy)), async _ => { await OnDestroy.InvokeAsync().NoSync(); }).NoSync();
         }
     }
 

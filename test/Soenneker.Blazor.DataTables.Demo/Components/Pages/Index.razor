@@ -12,7 +12,7 @@
 
 <Card>
     <CardBody>
-        <DataTable Options="_options" Class="table table-sm dt-responsive table-striped" style="width: 100%" OnInitialize="OnDataTableInitialized">
+        <DataTable Options="_options" Class="table table-sm dt-responsive table-striped" style="width: 100%" OnInitialize="OnDataTableInitialized" >
             <thead>
                 <tr>
                     <th>Name</th>
@@ -69,9 +69,9 @@
 @code{
     DataTableOptions _options;
 
-    private AutoFaker _autoFaker = default!;
+    private AutoFaker _autoFaker = null!;
 
-    private DataTable _DataTable = default!;
+    private DataTable _DataTable = null!;
 
     private bool _render = true;
     private bool _renderData = true;
@@ -89,18 +89,18 @@
             Paging = false,
             Order = [new object[] {0, "asc"}],
             OrderMulti = true,
-            Buttons = new List<object>
-            {
+            Buttons =
+            [
                 "copy",
                 "excel"
-            },
-            Language = new DataTableLanguageOptions()
+            ],
+            Language = new DataTableLanguageOptions
             {
                 Buttons = new
                 {
                     copy = "<i class='fad fa-clipboard'></i>",
                     excel = "<i class='fad fa-file-excel'></i>"
-                }    
+                }
             }
         };
     }
