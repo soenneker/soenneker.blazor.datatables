@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using Microsoft.AspNetCore.Components;
 using System.Threading.Tasks;
 using System.Threading;
 
 namespace Soenneker.Blazor.DataTables.Base.Abstract;
 
-public interface IBaseDataTable 
+public interface IBaseDataTable : IAsyncDisposable
 {
     #region Events
 

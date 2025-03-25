@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Soenneker.Blazor.DataTables.Abstract;
 using Soenneker.Blazor.DataTables.Base.Abstract;
 using Soenneker.Extensions.Task;
-using Soenneker.Extensions.ValueTask;
 
 namespace Soenneker.Blazor.DataTables.Base;
 
@@ -42,7 +41,6 @@ public partial class BaseDataTable : ComponentBase, IBaseDataTable
         InteropEventListener.DisposeForElement(ElementId);
 
         await CTs.CancelAsync().NoSync();
-        await DataTablesInterop.Destroy(ElementReference).NoSync();
     }
 
     protected void LogWarning(string message)

@@ -27,7 +27,7 @@ public partial class DataTable : BaseDataTable
 
     protected override async Task OnInitializedAsync()
     {
-        await DataTablesInterop.Initialize().NoSync();
+        await DataTablesInterop.Initialize(CTs.Token).NoSync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -56,7 +56,7 @@ public partial class DataTable : BaseDataTable
         await DataTablesInterop.Create(ElementReference, ElementId, DotNetReference, Options, linkedCts.Token).NoSync();
         await DataTablesInterop.CreateObserver(ElementReference, ElementId, linkedCts.Token).NoSync();
 
-        await AddEventListeners(linkedCts.Token).NoSync();
+        await AddEventListeners().NoSync();
     }
 
     [JSInvokable("OnInitializedJs")]
@@ -66,7 +66,7 @@ public partial class DataTable : BaseDataTable
             await OnInitialize.InvokeAsync().NoSync();
     }
 
-    private async ValueTask AddEventListeners(CancellationToken cancellationToken = default)
+    private async ValueTask AddEventListeners()
     {
         if (OnDestroy.HasDelegate)
         {
