@@ -65,8 +65,7 @@ export class DataTablesInterop {
             }
         });
 
-        const json = JSON.stringify(processedArgs);
-        return json;
+        return JSON.stringify(processedArgs);
     }
 
     objectToStringifyable(obj) {

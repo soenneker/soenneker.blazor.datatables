@@ -37,7 +37,7 @@ public partial class DataTableOptions
     /// Define and position the table control elements to appear on the page.
     /// </summary>
     [JsonPropertyName("layout")]
-    public string? Layout { get; set; }
+    public object? Layout { get; set; }
 
     /// <summary>
     /// Change the options in the page length select list.

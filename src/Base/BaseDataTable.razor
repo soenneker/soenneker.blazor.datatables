@@ -2,6 +2,7 @@
 @using Microsoft.Extensions.Logging
 @using Soenneker.Blazor.DataTables.Abstract
 @using Soenneker.Blazor.Utils.InteropEventListener.Abstract
+@using Soenneker.Extensions.ValueTask
 
 @* ReSharper disable InconsistentNaming *@
 @inject IDataTablesInterop _dataTablesInterop
@@ -37,10 +38,10 @@
         return ValueTask.CompletedTask;
     }
 
-    public ValueTask Destroy(CancellationToken cancellationToken = default)
+    public async ValueTask Destroy(CancellationToken cancellationToken = default)
     {
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, CTs.Token);
-        return DataTablesInterop.Destroy(ElementReference, linkedCts.Token);
+        await DataTablesInterop.Destroy(ElementReference, linkedCts.Token).NoSync();
     }
 
 }

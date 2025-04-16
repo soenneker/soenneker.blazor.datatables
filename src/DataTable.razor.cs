@@ -2,6 +2,7 @@
 using Microsoft.JSInterop;
 using Soenneker.Blazor.DataTables.Base;
 using Soenneker.Blazor.DataTables.Options;
+using Soenneker.Blazor.Extensions.EventCallback;
 using Soenneker.Extensions.String;
 using Soenneker.Extensions.Task;
 using Soenneker.Extensions.ValueTask;
@@ -60,10 +61,9 @@ public partial class DataTable : BaseDataTable
     }
 
     [JSInvokable("OnInitializedJs")]
-    public async Task OnInitializedJs()
+    public Task OnInitializedJs()
     {
-        if (OnInitialize.HasDelegate)
-            await OnInitialize.InvokeAsync().NoSync();
+        return OnInitialize.InvokeIfHasDelegate();
     }
 
     private async ValueTask AddEventListeners()
