@@ -8,7 +8,7 @@ export class DataTablesInterop {
         let _datatable;
 
         if (options) {
-            const opt = JSON.parse(options);
+            const opt = this.normalizeNulls(JSON.parse(options));
 
             opt.initComplete = async (settings, json) => {
                 await dotNetCallback.invokeMethodAsync("OnInitializedJs");
@@ -41,6 +41,28 @@ export class DataTablesInterop {
             if (tableElement)
                 tableElement.remove();
         }
+    }
+
+    normalizeNulls(obj) {
+        function walk(value) {
+            if (value === "null" || value === "__NULL__") {
+                return null;
+            }
+
+            if (Array.isArray(value)) {
+                return value.map(walk);
+            }
+
+            if (value !== null && typeof value === "object") {
+                for (const key in value) {
+                    value[key] = walk(value[key]);
+                }
+            }
+
+            return value;
+        }
+
+        return walk(obj);
     }
 
     async addEventListener(elementId, eventName, dotNetCallback) {

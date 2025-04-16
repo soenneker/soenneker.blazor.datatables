@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
-using Soenneker.Blazor.DataTables.Options.Language;
+﻿using Soenneker.Blazor.DataTables.Options.Language;
+using Soenneker.Blazor.DataTables.Options.Layout;
 using Soenneker.Blazor.DataTables.Options.RowGroup;
 using Soenneker.Blazor.DataTables.Options.RowReorder;
 using Soenneker.Blazor.DataTables.Options.Search;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Soenneker.Blazor.DataTables.Options;
 
@@ -37,7 +38,7 @@ public partial class DataTableOptions
     /// Define and position the table control elements to appear on the page.
     /// </summary>
     [JsonPropertyName("layout")]
-    public object? Layout { get; set; }
+    public DataTableLayout? Layout { get; set; }
 
     /// <summary>
     /// Change the options in the page length select list.
