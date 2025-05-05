@@ -1,4 +1,4 @@
-# Contributing to Soenneker.Blazor.DataTables
+﻿# Contributing to Soenneker.Blazor.DataTables
 
 We're excited that you're interested in contributing!
 
