@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Soenneker.Blazor.DataTables.Options.Responsive;
 
-public class DataTableResponsiveOptions
+public sealed class DataTableResponsiveOptions
 {
     /// <summary>
     /// Set the breakpoints for a Responsive instance.

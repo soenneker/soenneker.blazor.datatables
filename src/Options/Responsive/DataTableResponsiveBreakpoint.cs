@@ -2,7 +2,7 @@
 
 namespace Soenneker.Blazor.DataTables.Options.Responsive;
 
-public class DataTableResponsiveBreakpoint
+public sealed class DataTableResponsiveBreakpoint
 {
     /// <summary>
     /// The width at which the breakpoint occurs.

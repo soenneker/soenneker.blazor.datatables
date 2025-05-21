@@ -2,7 +2,7 @@
 
 namespace Soenneker.Blazor.DataTables.Options.Language.Paginate;
 
-public class DataTableLanguagePaginateOptions
+public sealed class DataTableLanguagePaginateOptions
 {
     /// <summary>
     /// Pagination 'first' button string.

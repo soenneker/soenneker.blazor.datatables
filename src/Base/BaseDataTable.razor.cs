@@ -22,7 +22,7 @@ public partial class BaseDataTable : ComponentBase, IBaseDataTable
     /// <summary>
     /// The actual HTML element's id
     /// </summary>
-    protected readonly string ElementId = Guid.NewGuid().ToString();
+    protected readonly string ElementId = $"datatable-{Guid.NewGuid().ToString()}";
 
     protected readonly CancellationTokenSource CTs = new();
 

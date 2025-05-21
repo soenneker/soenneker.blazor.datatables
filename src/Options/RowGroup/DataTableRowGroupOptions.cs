@@ -2,7 +2,7 @@
 
 namespace Soenneker.Blazor.DataTables.Options.RowGroup;
 
-public class DataTableRowGroupOptions
+public sealed class DataTableRowGroupOptions
 {
     /// <summary>
     /// Set the class name to be used for the grouping rows.
@@ -35,20 +35,8 @@ public class DataTableRowGroupOptions
     public string? EndClassName { get; set; }
 
     /// <summary>
-    /// Provide a function that can be used to control the data shown in the end grouping row.
-    /// </summary>
-    //[JsonPropertyName("endRender")]
-    //public Func<object, object>? EndRender { get; set; }
-
-    /// <summary>
     /// Set the class name to be used for the grouping start rows.
     /// </summary>
     [JsonPropertyName("startClassName")]
     public string? StartClassName { get; set; }
-
-    /// <summary>
-    /// Provide a function that can be used to control the data shown in the start grouping row.
-    /// </summary>
-    //[JsonPropertyName("startRender")]
-    //public Func<object, object>? StartRender { get; set; }
 }

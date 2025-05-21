@@ -2,7 +2,7 @@
 
 namespace Soenneker.Blazor.DataTables.Options.Language.Aria;
 
-public class DataTableLanguageAriaOptions
+public sealed class DataTableLanguageAriaOptions
 {
     /// <summary>
     /// Language string used for WAI-ARIA column orderable label.

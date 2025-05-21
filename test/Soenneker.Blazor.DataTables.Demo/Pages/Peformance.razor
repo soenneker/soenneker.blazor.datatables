@@ -2,10 +2,8 @@
 @using Microsoft.Extensions.Logging
 @using Soenneker.Blazor.DataTables.Demo.Dtos
 @using Soenneker.Blazor.DataTables.Options
-@using Soenneker.Blazor.DataTables.Options.Language
 
 @inject ILogger<Index> Logger
-@inject HttpClient Http
 
 <img src="https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png" />
 <h1>Soenneker.Blazor.DataTables demo</h1>
@@ -24,12 +22,12 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (Employee employee in employees)
+        @foreach (Employee employee in _employees)
         {
             <tr>
                 <td>@employee.Name</td>
                 <td>@employee.Position</td>
-                <td>@employee.Office</td>
+                <td>@employee.City</td>
                 <td>@employee.Age</td>
                 <td>@employee.StartDate</td>
                 <td>@employee.Salary</td>
@@ -51,18 +49,18 @@
 
     DataTableOptions _options;
 
-    List<Employee> employees = new List<Employee>();
+    readonly List<Employee> _employees = [];
 
-    private DataTable _DataTable = null!;
+    private DataTable _dataTable = null!;
 
     private bool _render = true;
     private bool _renderData = true;
 
     protected override void OnInitialized()
     {
-        for (int i = 0; i < 500; i++)
+        for (var i = 0; i < 500; i++)
         {
-            employees.Add(new Employee {Name = "John Doe", Position = "Developer", Office = "London", Age = 28, StartDate = DateTime.UtcNow, Salary = 320800});
+            _employees.Add(new Employee { Name = "John Doe", Position = "Developer", City = "London", Age = 28, StartDate = DateTime.UtcNow, Salary = 320800 });
         }
 
         _options = new DataTableOptions
@@ -73,20 +71,7 @@
             Info = false,
             Paging = false,
             Order = [new object[] {0, "asc"}],
-            OrderMulti = true,
-            Buttons = new List<object>
-            {
-                "copy",
-                "excel"
-            },
-            Language = new DataTableLanguageOptions()
-            {
-                Buttons = new
-                {
-                    copy = "<i class='fad fa-clipboard'></i>",
-                    excel = "<i class='fad fa-file-excel'></i>"
-                }    
-            }
+            OrderMulti = true
         };
     }
 

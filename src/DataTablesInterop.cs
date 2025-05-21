@@ -1,21 +1,21 @@
-using Soenneker.Blazor.DataTables.Abstract;
-using Microsoft.JSInterop;
-using System.Threading.Tasks;
-using Soenneker.Blazor.Utils.EventListeningInterop;
-using Soenneker.Blazor.Utils.ResourceLoader.Abstract;
-using Soenneker.Utils.AsyncSingleton;
-using Soenneker.Extensions.ValueTask;
-using System.Threading;
 using Microsoft.AspNetCore.Components;
-using Soenneker.Utils.Json;
-using System;
+using Microsoft.JSInterop;
+using Soenneker.Blazor.DataTables.Abstract;
 using Soenneker.Blazor.DataTables.Base;
 using Soenneker.Blazor.DataTables.Options;
+using Soenneker.Blazor.Utils.EventListeningInterop;
+using Soenneker.Blazor.Utils.ResourceLoader.Abstract;
+using Soenneker.Extensions.ValueTask;
+using Soenneker.Utils.AsyncSingleton;
+using Soenneker.Utils.Json;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Soenneker.Blazor.DataTables;
 
 /// <inheritdoc cref="IDataTablesInterop"/>
-public class DataTablesInterop : EventListeningInterop, IDataTablesInterop
+public sealed class DataTablesInterop : EventListeningInterop, IDataTablesInterop
 {
     private readonly IResourceLoader _resourceLoader;
     private readonly AsyncSingleton _scriptInitializer;
@@ -61,6 +61,11 @@ public class DataTablesInterop : EventListeningInterop, IDataTablesInterop
     public ValueTask Destroy(ElementReference elementReference, CancellationToken cancellationToken = default)
     {
         return JsRuntime.InvokeVoidAsync($"{_moduleName}.destroy", cancellationToken, elementReference);
+    }
+
+    public ValueTask Refresh(string elementId, CancellationToken cancellationToken = default)
+    {
+        return JsRuntime.InvokeVoidAsync($"{_moduleName}.refresh", cancellationToken, elementId);
     }
 
     public async ValueTask DisposeAsync()

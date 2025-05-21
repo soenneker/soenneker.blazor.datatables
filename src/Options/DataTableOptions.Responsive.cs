@@ -3,7 +3,7 @@ using Soenneker.Blazor.DataTables.Options.Responsive;
 
 namespace Soenneker.Blazor.DataTables.Options;
 
-public partial class DataTableOptions
+public sealed partial class DataTableOptions
 {
     /// <summary>
     /// Set the column's visibility priority.

@@ -8,7 +8,7 @@ public class Employee
 
     public string? Position { get; set; }
 
-    public string? Office { get; set; }
+    public string? City { get; set; }
 
     public int Age { get; set; }
 

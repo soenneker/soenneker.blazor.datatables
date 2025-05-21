@@ -4,7 +4,7 @@ using Soenneker.Blazor.DataTables.Options.Columns;
 
 namespace Soenneker.Blazor.DataTables.Options;
 
-public partial class DataTableOptions
+public sealed partial class DataTableOptions
 {
     /// <summary>
     /// Set column definition initialization properties.

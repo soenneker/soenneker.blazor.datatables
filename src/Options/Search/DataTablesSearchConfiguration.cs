@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Soenneker.Blazor.DataTables.Options.Search;
 
-public class DataTablesSearchConfiguration
+public sealed class DataTablesSearchConfiguration
 {
     /// <summary>
     /// Control case-sensitive filtering option.

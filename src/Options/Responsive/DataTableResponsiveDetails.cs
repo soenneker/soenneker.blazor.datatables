@@ -2,19 +2,8 @@
 
 namespace Soenneker.Blazor.DataTables.Options.Responsive;
 
-public class DataTableResponsiveDetails
+public sealed class DataTableResponsiveDetails
 {
-    /// <summary>
-    /// Define how the hidden information should be displayed to the end user.
-    /// </summary>
-    // [JsonPropertyName("display")]
-    //public Func<object, object>? Display { get; set; }
-
-    /// <summary>
-    /// Define the renderer used to display the child rows.
-    /// </summary>
-    // [JsonPropertyName("renderer")]
-    // public Func<object, object>? Renderer { get; set; }
 
     /// <summary>
     /// Column/selector for child row display control when using column details type.

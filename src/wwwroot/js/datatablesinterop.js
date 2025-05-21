@@ -2,25 +2,24 @@ export class DataTablesInterop {
     constructor() {
         this.datatables = {};
         this.options = {};
+        this._elementObservers = {}; // Only for element removal
     }
 
-    async create(element, elementId, options, dotNetCallback) {
+    create(element, elementId, options, dotNetCallback) {
         let _datatable;
 
         if (options) {
             const opt = this.normalizeNulls(JSON.parse(options));
-
-            opt.initComplete = async (settings, json) => {
-                await dotNetCallback.invokeMethodAsync("OnInitializedJs");
+            opt.initComplete = async () => {
+                dotNetCallback.invokeMethodAsync("OnInitializedJs");
             };
 
             _datatable = new DataTable('#' + elementId, opt);
-
             this.options[elementId] = opt;
         } else {
             _datatable = new DataTable('#' + elementId, {
-                initComplete: async (settings, json) => {
-                    await dotNetCallback.invokeMethodAsync("OnInitializedJs");
+                initComplete: async () => {
+                    dotNetCallback.invokeMethodAsync("OnInitializedJs");
                 }
             });
         }
@@ -30,28 +29,24 @@ export class DataTablesInterop {
 
     destroy(element) {
         const elementId = element.id;
-        const dataTable = this.datatables[elementId];
 
+        const dataTable = this.datatables[elementId];
         if (dataTable) {
             dataTable.destroy();
             delete this.datatables[elementId];
+        }
 
-            const tableElement = document.getElementById(elementId);
-
-            if (tableElement)
-                tableElement.remove();
+        if (this._elementObservers[elementId]) {
+            this._elementObservers[elementId].disconnect();
+            delete this._elementObservers[elementId];
         }
     }
 
     normalizeNulls(obj) {
         function walk(value) {
-            if (value === "null" || value === "__NULL__") {
-                return null;
-            }
+            if (value === "null" || value === "__NULL__") return null;
 
-            if (Array.isArray(value)) {
-                return value.map(walk);
-            }
+            if (Array.isArray(value)) return value.map(walk);
 
             if (value !== null && typeof value === "object") {
                 for (const key in value) {
@@ -79,14 +74,9 @@ export class DataTablesInterop {
     }
 
     getJsonFromArguments(...args) {
-        const processedArgs = args.map(arg => {
-            if (typeof arg === 'object' && arg !== null) {
-                return this.objectToStringifyable(arg);
-            } else {
-                return arg;
-            }
-        });
-
+        const processedArgs = args.map(arg =>
+            typeof arg === 'object' && arg !== null ? this.objectToStringifyable(arg) : arg
+        );
         return JSON.stringify(processedArgs);
     }
 
@@ -100,30 +90,46 @@ export class DataTablesInterop {
                 objectJSON[prop] = descriptor.get.call(obj);
             } else {
                 const propValue = obj[prop];
-                if (typeof propValue === 'object' && propValue !== null) {
-                    objectJSON[prop] = this.objectToStringifyable(propValue);
-                } else {
-                    objectJSON[prop] = propValue;
-                }
+                objectJSON[prop] = typeof propValue === 'object' && propValue !== null
+                    ? this.objectToStringifyable(propValue)
+                    : propValue;
             }
         });
 
         return objectJSON;
     }
 
+    refresh(elementId) {
+        const dt = this.datatables[elementId];
+        if (dt) {
+            dt.clear();         // Clear internal DataTables data
+            dt.rows.add($(dt.table().body()).children()); // Re-add rows from DOM
+            dt.draw();
+        }
+    }
+
     createObserver(element) {
-        this.observer = new MutationObserver((mutations) => {
-            const targetRemoved = mutations.some(mutation => Array.from(mutation.removedNodes).indexOf(element) !== -1);
+        const elementId = element.id;
+
+        // Clean up existing observer if any
+        if (this._elementObservers[elementId]) {
+            this._elementObservers[elementId].disconnect();
+            delete this._elementObservers[elementId];
+        }
+
+        const observer = new MutationObserver((mutations) => {
+            const targetRemoved = mutations.some(mutation =>
+                Array.from(mutation.removedNodes).includes(element)
+            );
 
             if (targetRemoved) {
-                this.destroy(element);
-
-                this.observer && this.observer.disconnect();
-                delete this.observer;
+                this.destroy(element); // This clears the observer
             }
         });
 
-        this.observer.observe(element.parentNode, { childList: true });
+        observer.observe(element.parentNode, { childList: true });
+
+        this._elementObservers[elementId] = observer;
     }
 }
 

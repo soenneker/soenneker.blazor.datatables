@@ -2,7 +2,7 @@
 
 namespace Soenneker.Blazor.DataTables.Options;
 
-public partial class DataTableOptions
+public sealed partial class DataTableOptions
 {
     /// <summary>
     /// Feature control DataTables' smart column width handling.

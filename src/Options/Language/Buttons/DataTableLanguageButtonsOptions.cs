@@ -2,7 +2,7 @@
 
 namespace Soenneker.Blazor.DataTables.Options.Language.Buttons;
 
-public class DataTablesLanguageButtonsOptions
+public sealed class DataTablesLanguageButtonsOptions
 {
     /// <summary>
     /// Set the text within the StateRestore creation button.

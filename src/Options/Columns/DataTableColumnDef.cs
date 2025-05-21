@@ -2,7 +2,7 @@
 
 namespace Soenneker.Blazor.DataTables.Options.Columns;
 
-public class DataTableColumnDef
+public sealed class DataTableColumnDef
 {
     /// <summary>
     /// Alias of targets.

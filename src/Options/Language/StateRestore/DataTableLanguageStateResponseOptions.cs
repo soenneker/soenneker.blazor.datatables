@@ -2,7 +2,7 @@
 
 namespace Soenneker.Blazor.DataTables.Options.Language.StateRestore;
 
-public class DataTablesLanguageStateRestoreOptions
+public sealed class DataTablesLanguageStateRestoreOptions
 {
     /// <summary>
     /// Set the text for the elements that are shown within the creation modal.

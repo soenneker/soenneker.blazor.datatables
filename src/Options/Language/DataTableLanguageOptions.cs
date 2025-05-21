@@ -5,7 +5,7 @@ using Soenneker.Blazor.DataTables.Options.Language.StateRestore;
 
 namespace Soenneker.Blazor.DataTables.Options.Language;
 
-public class DataTableLanguageOptions
+public sealed class DataTableLanguageOptions
 {
     /// <summary>
     /// Language strings used for WAI-ARIA specific attributes.

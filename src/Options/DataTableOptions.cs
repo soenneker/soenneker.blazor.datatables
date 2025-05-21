@@ -8,19 +8,13 @@ using System.Text.Json.Serialization;
 
 namespace Soenneker.Blazor.DataTables.Options;
 
-public partial class DataTableOptions
+public sealed partial class DataTableOptions
 {
     /// <summary>
     /// Delay the loading of server-side data until second draw.
     /// </summary>
     [JsonPropertyName("deferLoading")]
     public int? DeferLoading { get; set; }
-
-    /// <summary>
-    /// Destroy any existing table matching the selector and replace it with new options.
-    /// </summary>
-    //[JsonPropertyName("destroy")]
-    //public bool? Destroy { get; set; }
 
     /// <summary>
     /// Initial paging start point.

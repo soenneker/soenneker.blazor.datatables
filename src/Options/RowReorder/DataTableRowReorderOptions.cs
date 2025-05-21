@@ -2,7 +2,7 @@
 
 namespace Soenneker.Blazor.DataTables.Options.RowReorder;
 
-public class DataTableRowReorderOptions
+public sealed class DataTableRowReorderOptions
 {
     /// <summary>
     /// Enable or disable the canceling of the drag and drop interaction.

@@ -11,8 +11,6 @@
 @* ReSharper restore InconsistentNaming *@
 
 @code {
-    #region Events
-
     [Parameter]
     public EventCallback OnInitialize { get; set; }
 
@@ -22,7 +20,7 @@
     [Parameter]
     public bool Debug { get; set; }
 
-    #endregion Events
+    protected bool _visible = true;
 
     protected override void OnInitialized()
     {

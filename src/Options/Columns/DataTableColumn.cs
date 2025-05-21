@@ -85,12 +85,6 @@ public class DataTableColumn
     public List<string>? OrderSequence { get; set; }
 
     /// <summary>
-    /// Render (process) the data for use in the table.
-    /// </summary>
-    // [JsonPropertyName("render")]
-    // public Func<object, object>? Render { get; set; }
-
-    /// <summary>
     /// Enable or disable search on the data in this column.
     /// </summary>
     [JsonPropertyName("searchable")]

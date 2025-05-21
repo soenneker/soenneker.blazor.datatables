@@ -1,0 +1,131 @@
+﻿@page "/"
+@using Microsoft.Extensions.Logging
+@using Soenneker.Blazor.DataTables.Demo.Dtos
+@using Soenneker.Blazor.DataTables.Options
+@using Soenneker.Utils.AutoBogus
+
+@inject ILogger<Index> Logger
+
+<img src="https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png" />
+<h1>Soenneker.Blazor.DataTables demo</h1>
+<p>This page demonstrates some of the uses of the DataTables component.</p>
+
+<Container>
+    <DataTable @ref="_dataTable" Options="_options" class="table table-sm dt-responsive table-striped" style="width: 100%" OnInitialize="OnDataTableInitialized">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Age</th>
+                <th>Start date</th>
+                <th>Salary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (_renderData)
+            {
+                @foreach (Employee person in _people)
+                {
+                    <tr>
+                        <td>@person.Name</td>
+                        <td>@person.Position</td>
+                        <td>@person.City</td>
+                        <td>@person.Age</td>
+                        <td>@person.StartDate.ToString("yyyy/MM/dd")</td>
+                        <td>$@person.Salary</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </DataTable>
+    <br />
+
+    <button @onclick="Render" >Toggle Table</button>
+    <button @onclick="ClearViaData" >ClearViaData</button>
+    <button @onclick="Recreate" >Recreate</button>
+    <button @onclick="Refresh" >Refresh</button>
+    <NavLink href="/performance" >Go to performance</NavLink>
+</Container>
+
+@code {
+    private DataTableOptions _options = null!;
+
+    private DataTable? _dataTable;
+
+    private bool _render = true;
+    private bool _renderData = true;
+
+    private List<Employee> _people;
+
+    private readonly AutoFaker _autoFaker = new();
+
+    protected override void OnInitialized()
+    {
+        _people = GeneratePeople();
+
+        _options = new DataTableOptions
+        {
+            Dom = "Bfrtip",
+            Searching = true,
+            LengthChange = false,
+            Info = false,
+            Paging = false,
+            OrderMulti = true
+        };
+    }
+
+    private void OnDataTableInitialized()
+    {
+        Logger.LogInformation("OnInitialize called");
+    }
+
+    private async Task Refresh()
+    {
+        await _dataTable.RefreshWithDomUpdate(() => { _people = GeneratePeople(); });
+    }
+
+    private async Task Recreate()
+    {
+        await _dataTable.RecreateWithDomUpdate(() => { _people = GeneratePeople(); });
+    }
+
+    private void ClearViaData()
+    {
+        _people.Clear();
+    }
+
+    private void Render()
+    {
+        _render = !_render;
+    }
+
+    private void RebuildData()
+    {
+        _people.Clear();
+
+        _people = GeneratePeople();
+    }
+
+    private List<Employee> GeneratePeople()
+    {
+        var people = new List<Employee>();
+
+        for (var i = 0; i < 10; i++)
+        {
+            var person = new Bogus.Person();
+            people.Add(new Employee
+            {
+                Name = person.FullName,
+                Position = "Developer",
+                City = _autoFaker.Faker.Address.City(),
+                Age = _autoFaker.Faker.Random.Int(20, 50),
+                StartDate = DateTime.UtcNow,
+                Salary = _autoFaker.Faker.Random.Int(150000, 300000)
+            });
+        }
+
+        return people;
+    }
+
+}

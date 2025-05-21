@@ -2,7 +2,7 @@
 
 namespace Soenneker.Blazor.DataTables.Options.Language.Aria;
 
-public class DataTableLanguageAriaPaginateOptions
+public sealed class DataTableLanguageAriaPaginateOptions
 {
     /// <summary>
     /// WAI-ARIA label for the first pagination button.

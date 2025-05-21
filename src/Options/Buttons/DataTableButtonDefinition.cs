@@ -3,14 +3,8 @@ using System.Text.Json.Serialization;
 
 namespace Soenneker.Blazor.DataTables.Options.Buttons;
 
-public class DataTableButtonDefinition
+public sealed class DataTableButtonDefinition
 {
-    /// <summary>
-    /// Action to take when the button is activated.
-    /// </summary>
-    //[JsonPropertyName("action")]
-    //public Func<Task>? Action { get; set; }
-
     /// <summary>
     /// Indicate that a button's action processing should be performed asynchronously.
     /// </summary>
@@ -24,22 +18,10 @@ public class DataTableButtonDefinition
     public Dictionary<string, string>? Attr { get; set; }
 
     /// <summary>
-    /// Ensure that any requirements have been satisfied before initializing a button.
-    /// </summary>
-    // [JsonPropertyName("available")]
-    //public Func<bool>? Available { get; set; }
-
-    /// <summary>
     /// Set the class name for the button.
     /// </summary>
     [JsonPropertyName("className")]
     public string? ClassName { get; set; }
-
-    /// <summary>
-    /// Function that is called when the button is destroyed.
-    /// </summary>
-    // [JsonPropertyName("destroy")]
-    //public Action? Destroy { get; set; }
 
     /// <summary>
     /// Set a button's initial enabled state.
@@ -52,12 +34,6 @@ public class DataTableButtonDefinition
     /// </summary>
     [JsonPropertyName("extend")]
     public string? Extend { get; set; }
-
-    /// <summary>
-    /// Initialization function that can be used to add events specific to this button.
-    /// </summary>
-    // [JsonPropertyName("init")]
-    // public Action? Init { get; set; }
 
     /// <summary>
     /// Define an activation key for a button.
