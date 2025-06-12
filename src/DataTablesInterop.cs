@@ -1,14 +1,12 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Soenneker.Blazor.DataTables.Abstract;
-using Soenneker.Blazor.DataTables.Base;
 using Soenneker.Blazor.DataTables.Options;
 using Soenneker.Blazor.Utils.EventListeningInterop;
 using Soenneker.Blazor.Utils.ResourceLoader.Abstract;
 using Soenneker.Extensions.ValueTask;
 using Soenneker.Utils.AsyncSingleton;
 using Soenneker.Utils.Json;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -45,7 +43,7 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
         return JsRuntime.InvokeVoidAsync($"{_moduleName}.createObserver", cancellationToken, elementReference, elementId);
     }
 
-    public async ValueTask Create(ElementReference elementReference, string elementId, DotNetObjectReference<BaseDataTable> dotNetObjectRef,
+    public async ValueTask Create(ElementReference elementReference, string elementId, DotNetObjectReference<DataTable> dotNetObjectRef,
         DataTableOptions? configuration = null, CancellationToken cancellationToken = default)
     {
         await _scriptInitializer.Init(cancellationToken).NoSync();
@@ -70,8 +68,6 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
 
     public async ValueTask DisposeAsync()
     {
-        GC.SuppressFinalize(this);
-
         await _resourceLoader.DisposeModule(_modulePath).NoSync();
 
         await _scriptInitializer.DisposeAsync().NoSync();

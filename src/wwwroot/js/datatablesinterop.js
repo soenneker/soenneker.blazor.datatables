@@ -11,15 +11,67 @@ export class DataTablesInterop {
         if (options) {
             const opt = this.normalizeNulls(JSON.parse(options));
             opt.initComplete = async () => {
-                dotNetCallback.invokeMethodAsync("OnInitializedJs");
+                await dotNetCallback.invokeMethodAsync("OnInitializedJs");
             };
+
+            // Enable server-side processing
+            if (opt.serverSide) {
+                opt.processing = true;
+                opt.searching = true;
+                opt.paging = true;
+                opt.info = true;
+                opt.deferRender = true;
+                
+                // Centralize all server-side operations in the ajax function
+                opt.ajax = async function(data, callback, settings) {
+                    try {
+                        // Extract parameters from the DataTables request
+                        const pageNumber = Math.floor(data.start / data.length) + 1;
+                        const pageSize = data.length;
+                        const searchTerm = data.search?.value || '';
+                        const orderColumn = data.order?.[0]?.column;
+                        const orderDirection = data.order?.[0]?.dir || 'asc';
+                        
+                        // Call our Blazor method to get the data
+                        const result = await dotNetCallback.invokeMethodAsync("OnServerSideRequestJs",
+                            pageNumber,
+                            pageSize,
+                            searchTerm,
+                            orderColumn,
+                            orderDirection
+                        );
+                        
+                        // Parse the result
+                        const { data: tableData, totalRecords, totalFilteredRecords } = JSON.parse(result);
+                        
+                        // Return the data in DataTables format
+                        callback({
+                            draw: data.draw,
+                            recordsTotal: totalRecords,
+                            recordsFiltered: totalFilteredRecords,
+                            data: tableData
+                        });
+                    } catch (error) {
+                        console.error('Error in server-side processing:', error);
+                        callback({
+                            draw: data.draw,
+                            recordsTotal: 0,
+                            recordsFiltered: 0,
+                            data: []
+                        });
+                    }
+                };
+                
+                // Configure pagination display
+                $.fn.dataTable.ext.pager.numbers_length = 10;
+            }
 
             _datatable = new DataTable('#' + elementId, opt);
             this.options[elementId] = opt;
         } else {
             _datatable = new DataTable('#' + elementId, {
                 initComplete: async () => {
-                    dotNetCallback.invokeMethodAsync("OnInitializedJs");
+                    await dotNetCallback.invokeMethodAsync("OnInitializedJs");
                 }
             });
         }
@@ -64,39 +116,40 @@ export class DataTablesInterop {
         const dataTable = this.datatables[elementId];
 
         dataTable.on(eventName, async (...args) => {
-            if (eventName === "item_select") {
-                await dotNetCallback.invokeMethodAsync("Invoke", args[0].textContent);
-            } else {
-                const json = this.getJsonFromArguments(...args);
-                await dotNetCallback.invokeMethodAsync("Invoke", json);
+            try {
+                if (eventName === "item_select") {
+                    await dotNetCallback.invokeMethodAsync("Invoke", args[0].textContent);
+                } else {
+                    // For other events, we know the structure of the arguments
+                    // and can handle them directly without recursive serialization
+                    const processedArgs = args.map(arg => {
+                        if (typeof arg === 'object' && arg !== null) {
+                            // For DataTables API objects, extract only the properties we need
+                            if (arg instanceof DataTable.Api) {
+                                return {
+                                    page: arg.page.info().page + 1,
+                                    length: arg.page.info().length,
+                                    recordsTotal: arg.page.info().recordsTotal,
+                                    recordsDisplay: arg.page.info().recordsDisplay
+                                };
+                            }
+                            // For other objects, just get their direct properties
+                            const result = {};
+                            for (const key in arg) {
+                                if (typeof arg[key] !== 'object' || arg[key] === null) {
+                                    result[key] = arg[key];
+                                }
+                            }
+                            return result;
+                        }
+                        return arg;
+                    });
+                    await dotNetCallback.invokeMethodAsync("Invoke", JSON.stringify(processedArgs));
+                }
+            } catch (error) {
+                console.error(`Error handling ${eventName} event:`, error);
             }
         });
-    }
-
-    getJsonFromArguments(...args) {
-        const processedArgs = args.map(arg =>
-            typeof arg === 'object' && arg !== null ? this.objectToStringifyable(arg) : arg
-        );
-        return JSON.stringify(processedArgs);
-    }
-
-    objectToStringifyable(obj) {
-        let objectJSON = {};
-        const props = Object.getOwnPropertyNames(obj);
-
-        props.forEach(prop => {
-            const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
-            if (descriptor && typeof descriptor.get === 'function') {
-                objectJSON[prop] = descriptor.get.call(obj);
-            } else {
-                const propValue = obj[prop];
-                objectJSON[prop] = typeof propValue === 'object' && propValue !== null
-                    ? this.objectToStringifyable(propValue)
-                    : propValue;
-            }
-        });
-
-        return objectJSON;
     }
 
     refresh(elementId) {

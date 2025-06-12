@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Soenneker.Blazor.DataTables.Options;
 using System;
 using System.Collections.Generic;
@@ -76,5 +76,4 @@ public interface IDataTable
     /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
     /// <returns>A <see cref="ValueTask"/> representing the asynchronous operation.</returns>
     ValueTask RefreshWithDomUpdate(Action domMutator, CancellationToken cancellationToken = default);
-
 }

@@ -1,22 +1,45 @@
-﻿@using System.Threading
+@using System.Threading
 @using Microsoft.JSInterop
-@using Soenneker.Blazor.DataTables.Base
 @using Soenneker.Blazor.DataTables.Options
-@using Soenneker.Blazor.Extensions.EventCallback
 @using Soenneker.Extensions.String
-@using Soenneker.Extensions.Task
 @using Soenneker.Extensions.ValueTask
+@using Soenneker.Blazor.DataTables.Abstract
+@using Soenneker.Blazor.Utils.InteropEventListener.Abstract
+@using Microsoft.Extensions.Logging
+@using Soenneker.Blazor.DataTables.Dtos
+@using Soenneker.Utils.Json
 
-@implements Soenneker.Blazor.DataTables.Abstract.IDataTable
-@inherits Soenneker.Blazor.DataTables.Base.BaseDataTable
+@implements IDataTable
+@implements IAsyncDisposable
 
 <div style="@(_visible ? "" : "display:none")" >
-    <table id="@ElementId" @ref="ElementReference" @attributes="Attributes" >
+    <table id="@ElementId" @ref="_elementReference" @attributes="Attributes" >
         @ChildContent
     </table>
 </div>
 
 @code {
+
+    [Inject]
+    private IDataTablesInterop _dataTablesInterop { get; set; } = null!;
+
+    [Inject]
+    private IInteropEventListener _interopEventListener { get; set; } = null!;
+
+    [Inject]
+    private ILogger<DataTable> _logger { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback OnInitialize { get; set; }
+
+    [Parameter]
+    public EventCallback OnDestroy { get; set; }
+
+    [Parameter]
+    public Func<DataTablesServerSideRequest, Task<DataTablesServerResponse>>? OnServerSideRequest { get; set; }
+
+    [Parameter]
+    public bool Debug { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object?>? Attributes { get; set; }
@@ -27,21 +50,27 @@
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
+    private DotNetObjectReference<DataTable>? DotNetReference;
+    public readonly string ElementId = $"datatable-{Guid.NewGuid().ToString()}";
+    private readonly CancellationTokenSource _cTs = new();
+    private ElementReference _elementReference;
+
+    private bool _visible = true;
     private bool _elementInitialized;
 
     protected override async Task OnInitializedAsync()
     {
-        await DataTablesInterop.Initialize(CTs.Token).NoSync();
+        await _dataTablesInterop.Initialize(_cTs.Token).NoSync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            InteropEventListener.Initialize(DataTablesInterop);
+            _interopEventListener.Initialize(_dataTablesInterop);
         }
 
-        if (!_elementInitialized && ElementReference.Id.HasContent())
+        if (!_elementInitialized && _elementReference.Id.HasContent())
         {
             _elementInitialized = true;
 
@@ -54,26 +83,24 @@
         if (configuration != null)
             Options = configuration;
 
-        DotNetReference = DotNetObjectReference.Create<BaseDataTable>(this);
+        DotNetReference = DotNetObjectReference.Create(this);
 
-        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, CTs.Token);
+        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _cTs.Token);
 
-        await DataTablesInterop.Create(ElementReference, ElementId, DotNetReference, Options, linkedCts.Token).NoSync();
-        await DataTablesInterop.CreateObserver(ElementReference, ElementId, linkedCts.Token).NoSync();
-
-        await AddEventListeners().NoSync();
+        await _dataTablesInterop.Create(_elementReference, ElementId, DotNetReference, Options, linkedCts.Token).NoSync();
+        await _dataTablesInterop.CreateObserver(_elementReference, ElementId, linkedCts.Token).NoSync();
     }
 
     public async ValueTask RefreshWithDomUpdate(Func<ValueTask> domMutator, CancellationToken cancellationToken = default)
     {
-        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, CTs.Token);
+        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _cTs.Token);
 
         await domMutator().NoSync();
 
         StateHasChanged();
         await Task.Yield();
 
-        await DataTablesInterop.Refresh(ElementId, linkedCts.Token).NoSync();
+        await _dataTablesInterop.Refresh(ElementId, linkedCts.Token).NoSync();
     }
 
     public ValueTask RefreshWithDomUpdate(Action domMutator, CancellationToken cancellationToken = default)
@@ -87,24 +114,15 @@
 
     public async ValueTask RecreateWithDomUpdate(Func<ValueTask> domMutator, CancellationToken cancellationToken = default)
     {
-        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, CTs.Token);
+        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _cTs.Token);
 
-        _visible = false;
+        await domMutator().NoSync();
 
         StateHasChanged();
-        await Task.Yield(); // Let it hide before destroying
+        await Task.Yield();
 
-        await Destroy(linkedCts.Token).NoSync();
-
-        await domMutator().NoSync(); // Caller updates DOM or data
-
-        StateHasChanged(); // Force re-render
-        await Task.Yield(); // Let Blazor flush DOM
-
-        await Initialize(null, linkedCts.Token).NoSync(); // Recreate DataTable
-
-        _visible = true;
-        StateHasChanged(); // Reveal table after init
+        await _dataTablesInterop.Destroy(_elementReference, linkedCts.Token).NoSync();
+        await Initialize(null, linkedCts.Token).NoSync();
     }
 
     public ValueTask RecreateWithDomUpdate(Action domMutator, CancellationToken cancellationToken = default)
@@ -116,28 +134,47 @@
         }, cancellationToken);
     }
 
-    [JSInvokable("OnInitializedJs")]
-    public Task OnInitializedJs()
+    [JSInvokable]
+    public async Task OnInitializedJs()
     {
-        return OnInitialize.InvokeIfHasDelegate();
+        await OnInitialize.InvokeAsync();
     }
 
-    private async ValueTask AddEventListeners()
+    [JSInvokable]
+    public async Task<string> OnServerSideRequestJs(int pageNumber, int pageSize, string? searchTerm, int? orderColumn, string? orderDirection)
     {
-        if (OnDestroy.HasDelegate)
+        var request = new DataTablesServerSideRequest
         {
-            await AddEventListener<string>(GetJsEventName(nameof(OnDestroy)), async _ => { await OnDestroy.InvokeAsync().NoSync(); }).NoSync();
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            SearchTerm = searchTerm,
+            OrderColumn = orderColumn,
+            OrderDirection = orderDirection
+        };
+
+
+        if (OnServerSideRequest != null)
+        {
+            // Legacy string-based response for backward compatibility
+            DataTablesServerResponse result = await OnServerSideRequest(request);
+
+            return JsonUtil.Serialize(result);
         }
+
+        // Default empty response
+        return "{\"data\":[],\"recordsTotal\":0,\"recordsFiltered\":0,\"draw\":0}";
     }
 
-    private static string GetJsEventName(string callback)
+    public async ValueTask DisposeAsync()
     {
-        return callback[2..].ToSnakeCaseFromPascal();
-    }
+        if (DotNetReference != null)
+        {
+            DotNetReference.Dispose();
+        }
 
-    private ValueTask AddEventListener<T>(string eventName, Func<T, ValueTask> callback)
-    {
-        return InteropEventListener.Add("DataTablesInterop.addEventListener", ElementId, eventName, callback, CTs.Token);
-    }
+        await _cTs.CancelAsync();
+        _cTs.Dispose();
 
+        await OnDestroy.InvokeAsync();
+    }
 }

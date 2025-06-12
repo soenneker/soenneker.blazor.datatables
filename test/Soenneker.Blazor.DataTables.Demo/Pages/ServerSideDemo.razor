@@ -1,0 +1,80 @@
+@page "/server-side-demo"
+@using Microsoft.Extensions.Logging
+@using Soenneker.Blazor.DataTables
+@using Soenneker.Blazor.DataTables.Options
+@using Soenneker.Blazor.DataTables.Demo.Dtos
+@using Soenneker.Blazor.DataTables.Demo.Services
+@using Soenneker.Blazor.DataTables.Dtos
+@inject UserService UserService
+@inject ILogger<ServerSideDemo> _logger
+
+<PageTitle>Server-Side DataTable Demo</PageTitle>
+
+<div class="container mt-4" >
+    <h1>Server-Side DataTable Demo</h1>
+    <p class="lead" >This demo shows how to use the DataTable component with server-side operations.</p>
+
+    <div class="card" >
+        <div class="card-body" >
+            <DataTable @ref="dataTable"
+                       OnServerSideRequest="HandleServerSideRequest"
+                       Options="tableOptions" class="table table-sm dt-responsive table-striped" style="width: 100%" >
+                <thead>
+                    <tr>
+                        <th data-data="id" >ID</th>
+                        <th data-data="name" >Name</th>
+                        <th data-data="email" >Email</th>
+                        <th data-data="role" >Role</th>
+                        <th data-data="createdAt" >Created At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </DataTable>
+        </div>
+    </div>
+</div>
+
+@code {
+
+
+
+    private DataTable dataTable = null!;
+
+    private readonly DataTableOptions tableOptions = new()
+    {
+        ServerSide = true,
+        PageLength = 10
+    };
+
+    private int _drawCounter = 0;
+
+    private async Task<DataTablesServerResponse> HandleServerSideRequest(DataTablesServerSideRequest request)
+    {
+        try
+        {
+            _drawCounter++;
+
+            // Convert orderColumn to column name
+            string? orderBy = request.OrderColumn switch
+            {
+                0 => "id",
+                1 => "name",
+                2 => "email",
+                3 => "role",
+                4 => "createdAt",
+                _ => null
+            };
+
+            (List<UserDto> data, int totalRecords, int totalFilteredRecords) = await UserService.GetUsers(request.PageNumber, request.PageSize, orderBy, request.OrderDirection, request.SearchTerm);
+
+            return DataTablesServerResponse.Success(_drawCounter, totalRecords, totalFilteredRecords, data);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error processing server-side request");
+            return DataTablesServerResponse.Fail(_drawCounter, "An error occurred while processing your request. Please try again later.");
+        }
+    }
+
+}

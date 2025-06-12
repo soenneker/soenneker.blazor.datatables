@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using Serilog;
 using Serilog.Debugging;
+using Soenneker.Blazor.DataTables.Demo.Services;
 using Soenneker.Blazor.DataTables.Registrars;
 using Soenneker.Serilog.Sinks.Browser.Blazor.Registrars;
 
@@ -34,6 +35,7 @@ public class Program
             });
 
             builder.Services.AddDataTablesInteropAsScoped();
+            builder.Services.AddScoped<UserService>();
 
             builder.Services
                 .AddBlazorise()
