@@ -38,7 +38,7 @@
     public EventCallback OnDestroy { get; set; }
 
     [Parameter]
-    public Func<DataTablesServerSideRequest, Task<DataTableServerResponse>>? OnServerSideRequest { get; set; }
+    public Func<DataTableServerSideRequest, Task<DataTableServerResponse>>? OnServerSideRequest { get; set; }
 
     [Parameter]
     public bool Debug { get; set; }
@@ -154,7 +154,7 @@
         try
         {
             // Try to deserialize directly into the external package's DataTablesServerSideRequest
-            var request = JsonUtil.Deserialize<DataTablesServerSideRequest>(dataTablesRequestJson);
+            var request = JsonUtil.Deserialize<DataTableServerSideRequest>(dataTablesRequestJson);
 
             if (OnServerSideRequest != null)
             {

@@ -47,7 +47,7 @@ public interface IDataTable
 
     EventCallback OnDestroy { get; set; }
 
-    Func<DataTablesServerSideRequest, Task<DataTableServerResponse>>? OnServerSideRequest { get; set; }
+    Func<DataTableServerSideRequest, Task<DataTableServerResponse>>? OnServerSideRequest { get; set; }
 
     /// <summary>
     /// Destroys and reinitializes the DataTable after executing an asynchronous DOM update operation,
