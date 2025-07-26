@@ -5,7 +5,7 @@ namespace Soenneker.Blazor.DataTables.Dtos;
 /// <summary>
 /// Represents a server response for DataTables server-side processing.
 /// </summary>
-public class DataTablesServerResponse
+public sealed class DataTablesServerResponse
 {
     /// <summary>
     /// Gets or sets the draw counter that DataTables is expecting back from the server.

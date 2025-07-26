@@ -7,6 +7,7 @@
 @using Soenneker.Blazor.Utils.InteropEventListener.Abstract
 @using Microsoft.Extensions.Logging
 @using Soenneker.Blazor.DataTables.Dtos
+@using Soenneker.Extensions.Task
 @using Soenneker.Utils.Json
 
 @implements IDataTable
@@ -21,13 +22,13 @@
 @code {
 
     [Inject]
-    private IDataTablesInterop _dataTablesInterop { get; set; } = null!;
+    private IDataTablesInterop DataTablesInterop { get; set; } = null!;
 
     [Inject]
-    private IInteropEventListener _interopEventListener { get; set; } = null!;
+    private IInteropEventListener InteropEventListener { get; set; } = null!;
 
     [Inject]
-    private ILogger<DataTable> _logger { get; set; } = null!;
+    private ILogger<DataTable> Logger { get; set; } = null!;
 
     [Parameter]
     public EventCallback OnInitialize { get; set; }
@@ -55,19 +56,19 @@
     private readonly CancellationTokenSource _cTs = new();
     private ElementReference _elementReference;
 
-    private bool _visible = true;
+    private readonly bool _visible = true;
     private bool _elementInitialized;
 
     protected override async Task OnInitializedAsync()
     {
-        await _dataTablesInterop.Initialize(_cTs.Token).NoSync();
+        await DataTablesInterop.Initialize(_cTs.Token).NoSync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _interopEventListener.Initialize(_dataTablesInterop);
+            InteropEventListener.Initialize(DataTablesInterop);
         }
 
         if (!_elementInitialized && _elementReference.Id.HasContent())
@@ -87,8 +88,8 @@
 
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _cTs.Token);
 
-        await _dataTablesInterop.Create(_elementReference, ElementId, DotNetReference, Options, linkedCts.Token).NoSync();
-        await _dataTablesInterop.CreateObserver(_elementReference, ElementId, linkedCts.Token).NoSync();
+        await DataTablesInterop.Create(_elementReference, ElementId, DotNetReference, Options, linkedCts.Token).NoSync();
+        await DataTablesInterop.CreateObserver(_elementReference, ElementId, linkedCts.Token).NoSync();
     }
 
     public async ValueTask RefreshWithDomUpdate(Func<ValueTask> domMutator, CancellationToken cancellationToken = default)
@@ -100,7 +101,7 @@
         StateHasChanged();
         await Task.Yield();
 
-        await _dataTablesInterop.Refresh(ElementId, linkedCts.Token).NoSync();
+        await DataTablesInterop.Refresh(ElementId, linkedCts.Token).NoSync();
     }
 
     public ValueTask RefreshWithDomUpdate(Action domMutator, CancellationToken cancellationToken = default)
@@ -121,7 +122,7 @@
         StateHasChanged();
         await Task.Yield();
 
-        await _dataTablesInterop.Destroy(_elementReference, linkedCts.Token).NoSync();
+        await DataTablesInterop.Destroy(_elementReference, linkedCts.Token).NoSync();
         await Initialize(null, linkedCts.Token).NoSync();
     }
 
@@ -134,10 +135,14 @@
         }, cancellationToken);
     }
 
+
     [JSInvokable]
     public async Task OnInitializedJs()
     {
-        await OnInitialize.InvokeAsync();
+        if (OnInitialize.HasDelegate)
+        {
+            await OnInitialize.InvokeAsync().NoSync();
+        }
     }
 
     [JSInvokable]
@@ -167,14 +172,12 @@
 
     public async ValueTask DisposeAsync()
     {
-        if (DotNetReference != null)
-        {
-            DotNetReference.Dispose();
-        }
+        DotNetReference?.Dispose();
 
-        await _cTs.CancelAsync();
+        await _cTs.CancelAsync().NoSync();
         _cTs.Dispose();
 
-        await OnDestroy.InvokeAsync();
+        await OnDestroy.InvokeAsync().NoSync();
     }
+
 }
