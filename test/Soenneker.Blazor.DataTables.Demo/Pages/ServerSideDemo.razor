@@ -50,7 +50,7 @@
 
     private int _drawCounter = 0;
 
-    private async Task<DataTablesServerResponse> HandleServerSideRequest(DataTablesServerSideRequest request)
+    private async Task<DataTableServerResponse> HandleServerSideRequest(DataTablesServerSideRequest request)
     {
         try
         {
@@ -79,12 +79,12 @@
 
             (List<UserDto> data, int totalRecords, int totalFilteredRecords) = await UserService.GetUsers(pageNumber, pageSize, orderBy, orderDirection, searchTerm);
 
-            return DataTablesServerResponse.Success(_drawCounter, totalRecords, totalFilteredRecords, data);
+            return DataTableServerResponse.Success(_drawCounter, totalRecords, totalFilteredRecords, data);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error processing server-side request");
-            return DataTablesServerResponse.Fail(_drawCounter, "An error occurred while processing your request. Please try again later.");
+            return DataTableServerResponse.Fail(_drawCounter, "An error occurred while processing your request. Please try again later.");
         }
     }
 

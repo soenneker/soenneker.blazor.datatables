@@ -5,7 +5,7 @@ namespace Soenneker.Blazor.DataTables.Dtos;
 /// <summary>
 /// Represents a server response for DataTables server-side processing.
 /// </summary>
-public sealed class DataTablesServerResponse
+public sealed class DataTableServerResponse
 {
     /// <summary>
     /// Gets or sets the draw counter that DataTables is expecting back from the server.
@@ -45,9 +45,9 @@ public sealed class DataTablesServerResponse
     /// <param name="recordsFiltered">Total number of records after filtering.</param>
     /// <param name="data">The data to be displayed.</param>
     /// <returns>A configured DataTablesServerResponse.</returns>
-    public static DataTablesServerResponse Success(int draw, int recordsTotal, int recordsFiltered, object data)
+    public static DataTableServerResponse Success(int draw, int recordsTotal, int recordsFiltered, object data)
     {
-        return new DataTablesServerResponse
+        return new DataTableServerResponse
         {
             Draw = draw,
             TotalRecords = recordsTotal,
@@ -62,9 +62,9 @@ public sealed class DataTablesServerResponse
     /// <param name="draw">The draw counter from the request.</param>
     /// <param name="errorMessage">The error message to display.</param>
     /// <returns>A configured DataTablesServerResponse with the error message.</returns>
-    public static DataTablesServerResponse Fail(int draw, string errorMessage)
+    public static DataTableServerResponse Fail(int draw, string errorMessage)
     {
-        return new DataTablesServerResponse
+        return new DataTableServerResponse
         {
             Draw = draw,
             Error = errorMessage

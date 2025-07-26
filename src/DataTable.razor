@@ -38,7 +38,7 @@
     public EventCallback OnDestroy { get; set; }
 
     [Parameter]
-    public Func<DataTablesServerSideRequest, Task<DataTablesServerResponse>>? OnServerSideRequest { get; set; }
+    public Func<DataTablesServerSideRequest, Task<DataTableServerResponse>>? OnServerSideRequest { get; set; }
 
     [Parameter]
     public bool Debug { get; set; }
@@ -158,7 +158,7 @@
 
             if (OnServerSideRequest != null)
             {
-                DataTablesServerResponse result = await OnServerSideRequest(request);
+                DataTableServerResponse result = await OnServerSideRequest(request);
                 return JsonUtil.Serialize(result);
             }
 

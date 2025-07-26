@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Soenneker.Blazor.DataTables.Options.Columns;
+using Soenneker.DataTables.Dtos.Column;
 
 namespace Soenneker.Blazor.DataTables.Options;
 
