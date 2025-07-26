@@ -7,13 +7,14 @@
 @using Soenneker.Blazor.Utils.InteropEventListener.Abstract
 @using Microsoft.Extensions.Logging
 @using Soenneker.Blazor.DataTables.Dtos
+@using Soenneker.DataTables.Dtos.ServerSideRequest
 @using Soenneker.Extensions.Task
 @using Soenneker.Utils.Json
 
 @implements IDataTable
 @implements IAsyncDisposable
 
-<div style="@(_visible ? "" : "display:none")" >
+<div style="@(Visible ? "" : "display:none")" >
     <table id="@ElementId" @ref="_elementReference" @attributes="Attributes" >
         @ChildContent
     </table>
@@ -56,7 +57,9 @@
     private readonly CancellationTokenSource _cTs = new();
     private ElementReference _elementReference;
 
-    private readonly bool _visible = true;
+    [Parameter]
+    public bool Visible { get; set; } = true;
+
     private bool _elementInitialized;
 
     protected override async Task OnInitializedAsync()
@@ -146,28 +149,27 @@
     }
 
     [JSInvokable]
-    public async Task<string> OnServerSideRequestJs(int pageNumber, int pageSize, string? searchTerm, int? orderColumn, string? orderDirection)
+    public async Task<string> OnServerSideRequestJs(string dataTablesRequestJson)
     {
-        var request = new DataTablesServerSideRequest
+        try
         {
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            SearchTerm = searchTerm,
-            OrderColumn = orderColumn,
-            OrderDirection = orderDirection
-        };
+            // Try to deserialize directly into the external package's DataTablesServerSideRequest
+            var request = JsonUtil.Deserialize<DataTablesServerSideRequest>(dataTablesRequestJson);
 
+            if (OnServerSideRequest != null)
+            {
+                DataTablesServerResponse result = await OnServerSideRequest(request);
+                return JsonUtil.Serialize(result);
+            }
 
-        if (OnServerSideRequest != null)
-        {
-            // Legacy string-based response for backward compatibility
-            DataTablesServerResponse result = await OnServerSideRequest(request);
-
-            return JsonUtil.Serialize(result);
+            // Default empty response
+            return "{\"data\":[],\"recordsTotal\":0,\"recordsFiltered\":0,\"draw\":0}";
         }
-
-        // Default empty response
-        return "{\"data\":[],\"recordsTotal\":0,\"recordsFiltered\":0,\"draw\":0}";
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error processing server-side request: {Message}", ex.Message);
+            return "{\"data\":[],\"recordsTotal\":0,\"recordsFiltered\":0,\"draw\":0,\"error\":\"An error occurred while processing your request.\"}";
+        }
     }
 
     public async ValueTask DisposeAsync()

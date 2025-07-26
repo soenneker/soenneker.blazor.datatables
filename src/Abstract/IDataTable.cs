@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Components;
+using Soenneker.Blazor.DataTables.Dtos;
 using Soenneker.Blazor.DataTables.Options;
+using Soenneker.DataTables.Dtos.ServerSideRequest;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -41,6 +43,12 @@ public interface IDataTable
     /// <returns>A Task representing the callback logic.</returns>
     Task OnInitializedJs();
 
+    EventCallback OnInitialize { get; set; }
+
+    EventCallback OnDestroy { get; set; }
+
+    Func<DataTablesServerSideRequest, Task<DataTablesServerResponse>>? OnServerSideRequest { get; set; }
+
     /// <summary>
     /// Destroys and reinitializes the DataTable after executing an asynchronous DOM update operation,
     /// such as modifying the rendered table body. Blazor render is triggered before reinitialization.
@@ -76,4 +84,6 @@ public interface IDataTable
     /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
     /// <returns>A <see cref="ValueTask"/> representing the asynchronous operation.</returns>
     ValueTask RefreshWithDomUpdate(Action domMutator, CancellationToken cancellationToken = default);
+
+    bool Visible { get; set; }
 }

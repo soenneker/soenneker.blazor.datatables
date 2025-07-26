@@ -22,24 +22,10 @@ export class DataTablesInterop {
                 opt.info = true;
                 opt.deferRender = true;
                 
-                // Centralize all server-side operations in the ajax function
                 opt.ajax = async function(data, callback, settings) {
                     try {
-                        // Extract parameters from the DataTables request
-                        const pageNumber = Math.floor(data.start / data.length) + 1;
-                        const pageSize = data.length;
-                        const searchTerm = data.search?.value || '';
-                        const orderColumn = data.order?.[0]?.column;
-                        const orderDirection = data.order?.[0]?.dir || 'asc';
-                        
-                        // Call our Blazor method to get the data
-                        const result = await dotNetCallback.invokeMethodAsync("OnServerSideRequestJs",
-                            pageNumber,
-                            pageSize,
-                            searchTerm,
-                            orderColumn,
-                            orderDirection
-                        );
+                        // Send the entire DataTables request object to Blazor
+                        const result = await dotNetCallback.invokeMethodAsync("OnServerSideRequestJs", JSON.stringify(data));
                         
                         // Parse the result
                         const { data: tableData, totalRecords, totalFilteredRecords } = JSON.parse(result);

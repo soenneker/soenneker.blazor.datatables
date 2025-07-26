@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Soenneker.Blazor.DataTables.Options.Columns;
 
-public class DataTableColumn
+public sealed class DataTableColumn
 {
     /// <summary>
     /// Set the columns' aria-label attribute value.

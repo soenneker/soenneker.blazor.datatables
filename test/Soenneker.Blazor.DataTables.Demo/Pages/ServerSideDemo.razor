@@ -5,6 +5,7 @@
 @using Soenneker.Blazor.DataTables.Demo.Dtos
 @using Soenneker.Blazor.DataTables.Demo.Services
 @using Soenneker.Blazor.DataTables.Dtos
+@using Soenneker.DataTables.Dtos.ServerSideRequest
 @inject UserService UserService
 @inject ILogger<ServerSideDemo> _logger
 
@@ -56,17 +57,27 @@
             _drawCounter++;
 
             // Convert orderColumn to column name
-            string? orderBy = request.OrderColumn switch
+            string? orderBy = null;
+            if (request.Order?.Count > 0)
             {
-                0 => "id",
-                1 => "name",
-                2 => "email",
-                3 => "role",
-                4 => "createdAt",
-                _ => null
-            };
+                orderBy = request.Order[0].Column switch
+                {
+                    0 => "id",
+                    1 => "name",
+                    2 => "email",
+                    3 => "role",
+                    4 => "createdAt",
+                    _ => null
+                };
+            }
 
-            (List<UserDto> data, int totalRecords, int totalFilteredRecords) = await UserService.GetUsers(request.PageNumber, request.PageSize, orderBy, request.OrderDirection, request.SearchTerm);
+            // Calculate page number from start and length
+            int pageNumber = (request.Start / request.Length) + 1;
+            int pageSize = request.Length;
+            string? searchTerm = request.Search?.Value;
+            string? orderDirection = request.Order?.Count > 0 ? request.Order[0].Dir : null;
+
+            (List<UserDto> data, int totalRecords, int totalFilteredRecords) = await UserService.GetUsers(pageNumber, pageSize, orderBy, orderDirection, searchTerm);
 
             return DataTablesServerResponse.Success(_drawCounter, totalRecords, totalFilteredRecords, data);
         }
