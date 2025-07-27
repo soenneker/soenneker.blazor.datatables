@@ -15,9 +15,17 @@
 @implements IAsyncDisposable
 
 <div style="@(Visible ? "" : "display:none")" >
-    <table id="@ElementId" @ref="_elementReference" @attributes="Attributes" >
-        @ChildContent
-    </table>
+    @if (ProcessingIndicator != null)
+    {
+        <div id="@(ElementId)-processing" class="datatable-processing-indicator" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: white; padding: 20px; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            @ProcessingIndicator
+        </div>
+    }
+    <div style="position: relative;">
+        <table id="@ElementId" @ref="_elementReference" @attributes="Attributes" >
+            @ChildContent
+        </table>
+    </div>
 </div>
 
 @code {
@@ -52,7 +60,14 @@
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
-    private DotNetObjectReference<DataTable>? DotNetReference;
+    /// <summary>
+    /// Custom processing indicator content to display during server-side operations.
+    /// This will replace the default DataTables processing indicator.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ProcessingIndicator { get; set; }
+
+    private DotNetObjectReference<DataTable>? _dotNetReference;
     public readonly string ElementId = $"datatable-{Guid.NewGuid().ToString()}";
     private readonly CancellationTokenSource _cTs = new();
     private ElementReference _elementReference;
@@ -87,11 +102,11 @@
         if (configuration != null)
             Options = configuration;
 
-        DotNetReference = DotNetObjectReference.Create(this);
+        _dotNetReference = DotNetObjectReference.Create(this);
 
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _cTs.Token);
 
-        await DataTablesInterop.Create(_elementReference, ElementId, DotNetReference, Options, linkedCts.Token).NoSync();
+        await DataTablesInterop.Create(_elementReference, ElementId, _dotNetReference, Options, linkedCts.Token).NoSync();
         await DataTablesInterop.CreateObserver(_elementReference, ElementId, linkedCts.Token).NoSync();
     }
 
@@ -156,7 +171,7 @@
             // Try to deserialize directly into the external package's DataTablesServerSideRequest
             var request = JsonUtil.Deserialize<DataTableServerSideRequest>(dataTablesRequestJson);
 
-            if (OnServerSideRequest != null)
+            if (OnServerSideRequest != null && request != null)
             {
                 DataTableServerResponse result = await OnServerSideRequest(request);
                 return JsonUtil.Serialize(result);
@@ -174,7 +189,7 @@
 
     public async ValueTask DisposeAsync()
     {
-        DotNetReference?.Dispose();
+        _dotNetReference?.Dispose();
 
         await _cTs.CancelAsync().NoSync();
         _cTs.Dispose();

@@ -10,33 +10,33 @@
 <p>This page demonstrates some of the uses of the DataTables component.</p>
 
 <DataTable Options="_options">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Position</th>
-            <th>Office</th>
-            <th>Age</th>
-            <th>Start date</th>
-            <th>Salary</th>
-            <th>Link</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (Employee employee in _employees)
-        {
+        <thead>
             <tr>
-                <td>@employee.Name</td>
-                <td>@employee.Position</td>
-                <td>@employee.City</td>
-                <td>@employee.Age</td>
-                <td>@employee.StartDate</td>
-                <td>@employee.Salary</td>
-                <td>
-                    <Anchor To=@("/") >Link</Anchor>
-                </td>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Age</th>
+                <th>Start date</th>
+                <th>Salary</th>
+                <th>Link</th>
             </tr>
-        }
-    </tbody>
+        </thead>
+        <tbody>
+            @foreach (Employee employee in _employees)
+            {
+                <tr>
+                    <td>@employee.Name</td>
+                    <td>@employee.Position</td>
+                    <td>@employee.City</td>
+                    <td>@employee.Age</td>
+                    <td>@employee.StartDate</td>
+                    <td>@employee.Salary</td>
+                    <td>
+                        <Anchor To=@("/")>Link</Anchor>
+                    </td>
+                </tr>
+            }
+        </tbody>
 </DataTable>
 
 <br />

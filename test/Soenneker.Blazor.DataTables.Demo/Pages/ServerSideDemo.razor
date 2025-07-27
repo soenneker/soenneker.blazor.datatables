@@ -7,7 +7,7 @@
 @using Soenneker.Blazor.DataTables.Dtos
 @using Soenneker.DataTables.Dtos.ServerSideRequest
 @inject UserService UserService
-@inject ILogger<ServerSideDemo> _logger
+@inject ILogger<ServerSideDemo> Logger
 
 <PageTitle>Server-Side DataTable Demo</PageTitle>
 
@@ -17,9 +17,9 @@
 
     <div class="card" >
         <div class="card-body" >
-            <DataTable @ref="dataTable"
+            <DataTable @ref="_dataTable"
                        OnServerSideRequest="HandleServerSideRequest"
-                       Options="tableOptions" class="table table-sm dt-responsive table-striped" style="width: 100%" >
+                       Options="_tableOptions" class="table table-sm dt-responsive table-striped" style="width: 100%" >
                 <thead>
                     <tr>
                         <th data-data="id" >ID</th>
@@ -39,10 +39,9 @@
 @code {
 
 
+    private DataTable _dataTable = null!;
 
-    private DataTable dataTable = null!;
-
-    private readonly DataTableOptions tableOptions = new()
+    private readonly DataTableOptions _tableOptions = new()
     {
         ServerSide = true,
         PageLength = 10
@@ -83,7 +82,7 @@
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error processing server-side request");
+            Logger.LogError(ex, "Error processing server-side request");
             return DataTableServerResponse.Fail(_drawCounter, "An error occurred while processing your request. Please try again later.");
         }
     }

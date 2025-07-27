@@ -64,3 +64,35 @@ public void ConfigureServices(IServiceCollection services)
     };
 }
 ```
+
+## Custom Processing Indicators
+
+When using server-side processing, you can override the default DataTables processing indicator with custom Blazor content. This feature allows you to:
+
+- Display custom Blazor components as the processing indicator
+- Use any Blazor markup, components, and styling
+- Disable the processing indicator entirely
+
+### Basic Usage
+
+```razor
+<DataTable Options="tableOptions" OnServerSideRequest="HandleServerSideRequest">
+    <ProcessingIndicator>
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status"></div>
+            <div class="mt-2">Loading data from server...</div>
+        </div>
+    </ProcessingIndicator>
+    <ChildContent>
+        <thead>
+            <tr>
+                <th data-data="id">ID</th>
+                <th data-data="name">Name</th>
+                <th data-data="email">Email</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </ChildContent>
+</DataTable>
+```

@@ -12,32 +12,32 @@
 
 <Container>
     <DataTable @ref="_dataTable" Options="_options" class="table table-sm dt-responsive table-striped" style="width: 100%" OnInitialize="OnDataTableInitialized">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Office</th>
-                <th>Age</th>
-                <th>Start date</th>
-                <th>Salary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (_renderData)
-            {
-                @foreach (Employee person in _people)
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Office</th>
+                    <th>Age</th>
+                    <th>Start date</th>
+                    <th>Salary</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (_renderData)
                 {
-                    <tr>
-                        <td>@person.Name</td>
-                        <td>@person.Position</td>
-                        <td>@person.City</td>
-                        <td>@person.Age</td>
-                        <td>@person.StartDate.ToString("yyyy/MM/dd")</td>
-                        <td>$@person.Salary</td>
-                    </tr>
+                    @foreach (Employee person in _people)
+                    {
+                        <tr>
+                            <td>@person.Name</td>
+                            <td>@person.Position</td>
+                            <td>@person.City</td>
+                            <td>@person.Age</td>
+                            <td>@person.StartDate.ToString("yyyy/MM/dd")</td>
+                            <td>$@person.Salary</td>
+                        </tr>
+                    }
                 }
-            }
-        </tbody>
+            </tbody>
     </DataTable>
     <br />
 
@@ -46,6 +46,8 @@
     <button @onclick="Recreate" >Recreate</button>
     <button @onclick="Refresh" >Refresh</button>
     <NavLink href="/performance" >Go to performance</NavLink>
+    <NavLink href="/server-side-demo" >Server-Side Demo</NavLink>
+    <NavLink href="/custom-loading-demo" >Custom Loading Demo</NavLink>
 </Container>
 
 @code {

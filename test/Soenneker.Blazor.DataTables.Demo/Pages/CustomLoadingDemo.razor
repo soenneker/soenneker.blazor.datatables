@@ -1,0 +1,221 @@
+@page "/custom-loading-demo"
+@using Microsoft.Extensions.Logging
+@using Soenneker.Blazor.DataTables
+@using Soenneker.Blazor.DataTables.Options
+@using Soenneker.Blazor.DataTables.Demo.Dtos
+@using Soenneker.Blazor.DataTables.Demo.Services
+@using Soenneker.Blazor.DataTables.Dtos
+@using Soenneker.DataTables.Dtos.ServerSideRequest
+@inject UserService UserService
+@inject ILogger<CustomLoadingDemo> Logger
+
+<PageTitle>Custom Processing Indicator Demo</PageTitle>
+
+<div class="container mt-4" >
+    <h1>Custom Processing Indicator Demo</h1>
+    <p class="lead" >This demo shows how to override the default DataTables processing text during server-side processing.</p>
+
+    <div class="row" >
+        <div class="col-md-6" >
+            <div class="card" >
+                <div class="card-header" >
+                    <h5>Default Processing Indicator</h5>
+                </div>
+                <div class="card-body" >
+                    <DataTable @ref="_defaultDataTable"
+                               OnServerSideRequest="HandleServerSideRequest"
+                               Options="_defaultTableOptions"
+                               class="table table-sm dt-responsive table-striped"
+                               style="width: 100%" >
+
+                        <thead>
+                            <tr>
+                                <th data-data="id" >ID</th>
+                                <th data-data="name" >Name</th>
+                                <th data-data="email" >Email</th>
+                                <th data-data="role" >Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </DataTable>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6" >
+            <div class="card" >
+                <div class="card-header" >
+                    <h5>Custom Processing Indicator</h5>
+                </div>
+                <div class="card-body" >
+                    <DataTable @ref="_customDataTable"
+                               OnServerSideRequest="HandleServerSideRequest"
+                               Options="_customTableOptions"
+                               class="table table-sm dt-responsive table-striped"
+                               style="width: 100%" >
+                        <ProcessingIndicator>
+                            <div class="text-center" >
+                                <div class="spinner-border text-primary" role="status" ></div>
+                                <div class="mt-2" >Loading data from server...</div>
+                            </div>
+                        </ProcessingIndicator>
+                        <ChildContent>
+                            <thead>
+                                <tr>
+                                    <th data-data="id" >ID</th>
+                                    <th data-data="name" >Name</th>
+                                    <th data-data="email" >Email</th>
+                                    <th data-data="role" >Role</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </ChildContent>
+                    </DataTable>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4" >
+        <div class="col-md-6" >
+            <div class="card" >
+                <div class="card-header" >
+                    <h5>Disabled Processing Indicator</h5>
+                </div>
+                <div class="card-body" >
+                    <DataTable @ref="_disabledDataTable"
+                               OnServerSideRequest="HandleServerSideRequest"
+                               Options="_disabledTableOptions"
+                               class="table table-sm dt-responsive table-striped"
+                               style="width: 100%" >
+                               <ProcessingIndicator></ProcessingIndicator>
+                        <ChildContent>
+                            <thead>
+                                <tr>
+                                    <th data-data="id" >ID</th>
+                                    <th data-data="name" >Name</th>
+                                    <th data-data="email" >Email</th>
+                                    <th data-data="role" >Role</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </ChildContent>
+                    </DataTable>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6" >
+            <div class="card" >
+                <div class="card-header" >
+                    <h5>HTML Processing Indicator</h5>
+                </div>
+                <div class="card-body" >
+                    <DataTable @ref="_htmlDataTable"
+                               OnServerSideRequest="HandleServerSideRequest"
+                               Options="_htmlTableOptions"
+                               class="table table-sm dt-responsive table-striped"
+                               style="width: 100%" >
+                        <ProcessingIndicator>
+                            <div class="text-center" >
+                                <div class="spinner-border text-primary" role="status" ></div>
+                                <div class="mt-2" >Loading data...</div>
+                                <div class="small text-muted" >Please wait while we fetch your data</div>
+                            </div>
+                        </ProcessingIndicator>
+                        <ChildContent>
+                            <thead>
+                                <tr>
+                                    <th data-data="id" >ID</th>
+                                    <th data-data="name" >Name</th>
+                                    <th data-data="email" >Email</th>
+                                    <th data-data="role" >Role</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </ChildContent>
+                    </DataTable>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private DataTable _defaultDataTable = null!;
+    private DataTable _customDataTable = null!;
+    private DataTable _disabledDataTable = null!;
+    private DataTable _htmlDataTable = null!;
+
+    private readonly DataTableOptions _defaultTableOptions = new()
+    {
+        ServerSide = true,
+        PageLength = 5
+    };
+
+    private readonly DataTableOptions _customTableOptions = new()
+    {
+        ServerSide = true,
+        PageLength = 5
+    };
+
+    private readonly DataTableOptions _disabledTableOptions = new()
+    {
+        ServerSide = true,
+        PageLength = 5,
+        Processing = false
+    };
+
+    private readonly DataTableOptions _htmlTableOptions = new()
+    {
+        ServerSide = true,
+        PageLength = 5
+    };
+
+    private int _drawCounter = 0;
+
+    private async Task<DataTableServerResponse> HandleServerSideRequest(DataTableServerSideRequest request)
+    {
+        try
+        {
+            _drawCounter++;
+
+            // Simulate some processing time
+            await Task.Delay(1000);
+
+            // Convert orderColumn to column name
+            string? orderBy = null;
+            if (request.Order?.Count > 0)
+            {
+                orderBy = request.Order[0].Column switch
+                {
+                    0 => "id",
+                    1 => "name",
+                    2 => "email",
+                    3 => "role",
+                    _ => null
+                };
+            }
+
+            // Calculate page number from start and length
+            int pageNumber = (request.Start / request.Length) + 1;
+            int pageSize = request.Length;
+            string? searchTerm = request.Search?.Value;
+            string? orderDirection = request.Order?.Count > 0 ? request.Order[0].Dir : null;
+
+            (List<UserDto> data, int totalRecords, int totalFilteredRecords) = await UserService.GetUsers(pageNumber, pageSize, orderBy, orderDirection, searchTerm);
+
+            return DataTableServerResponse.Success(_drawCounter, totalRecords, totalFilteredRecords, data);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error processing server-side request");
+            return DataTableServerResponse.Fail(_drawCounter, "An error occurred while processing your request. Please try again later.");
+        }
+    }
+
+}

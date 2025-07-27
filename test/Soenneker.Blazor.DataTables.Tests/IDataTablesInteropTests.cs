@@ -9,7 +9,7 @@ public class DataTablesInteropTests : FixturedUnitTest
 {
     private readonly IDataTablesInterop _util;
 
-    public DataTablesInteropTests(Fixture fixture, ITestOutputHelper output) : base(fixture, output)
+    public DataTablesInteropTests(DataFixture fixture, ITestOutputHelper output) : base(fixture, output)
     {
         _util = Resolve<IDataTablesInterop>(true);
     }

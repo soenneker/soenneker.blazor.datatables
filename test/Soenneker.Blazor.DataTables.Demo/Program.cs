@@ -16,7 +16,7 @@ using Soenneker.Serilog.Sinks.Browser.Blazor.Registrars;
 
 namespace Soenneker.Blazor.DataTables.Demo;
 
-public class Program
+public class DataProgram
 {
     public static async Task Main(string[] args)
     {

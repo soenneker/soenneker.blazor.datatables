@@ -16,16 +16,57 @@ export class DataTablesInterop {
 
             // Enable server-side processing
             if (opt.serverSide) {
-                opt.processing = true;
+                // Only set processing to true if it's not explicitly set to false
+                if (opt.processing !== false) {
+                    opt.processing = true;
+                }
                 opt.searching = true;
                 opt.paging = true;
                 opt.info = true;
                 opt.deferRender = true;
                 
+                // Check if there's a custom processing indicator element
+                const processingElement = document.getElementById(elementId + '-processing');
+                if (processingElement) {
+                    // Check if the processing element has any content (not just empty)
+                    const hasContent = processingElement.children.length > 0 || processingElement.textContent.trim().length > 0;
+                    
+                    if (hasContent) {
+                        // If processing is explicitly disabled, we still want to use the custom indicator
+                        if (opt.processing === false) {
+                            opt.hasCustomProcessingIndicator = true;
+                        } else {
+                            // Disable default processing and use custom Blazor-rendered indicator
+                            opt.processing = false;
+                            opt.hasCustomProcessingIndicator = true;
+                        }
+                    } else {
+                        // Empty processing indicator - treat as if no processing indicator exists
+                        opt.processing = false;
+                        opt.hasCustomProcessingIndicator = false;
+                    }
+                }
+                
                 opt.ajax = async function(data, callback, settings) {
                     try {
+                        // Show custom processing indicator if configured
+                        if (opt.hasCustomProcessingIndicator) {
+                            const processingElement = document.getElementById(elementId + '-processing');
+                            if (processingElement) {
+                                processingElement.style.display = 'block';
+                            }
+                        }
+                        
                         // Send the entire DataTables request object to Blazor
                         const result = await dotNetCallback.invokeMethodAsync("OnServerSideRequestJs", JSON.stringify(data));
+                        
+                        // Hide custom processing indicator
+                        if (opt.hasCustomProcessingIndicator) {
+                            const processingElement = document.getElementById(elementId + '-processing');
+                            if (processingElement) {
+                                processingElement.style.display = 'none';
+                            }
+                        }
                         
                         // Parse the result
                         const { data: tableData, totalRecords, totalFilteredRecords } = JSON.parse(result);
@@ -38,6 +79,14 @@ export class DataTablesInterop {
                             data: tableData
                         });
                     } catch (error) {
+                        // Hide custom processing indicator on error
+                        if (opt.hasCustomProcessingIndicator) {
+                            const processingElement = document.getElementById(elementId + '-processing');
+                            if (processingElement) {
+                                processingElement.style.display = 'none';
+                            }
+                        }
+                        
                         console.error('Error in server-side processing:', error);
                         callback({
                             draw: data.draw,

@@ -8,6 +8,6 @@ namespace Soenneker.Blazor.DataTables.Tests;
 /// ICollectionFixture interfaces.
 /// </summary>
 [CollectionDefinition("Collection")]
-public class Collection : ICollectionFixture<Fixture>
+public class DataCollection : ICollectionFixture<DataFixture>
 {
 }
