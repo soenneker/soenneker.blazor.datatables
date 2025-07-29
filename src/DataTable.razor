@@ -1,4 +1,4 @@
-@using System.Threading
+﻿@using System.Threading
 @using Microsoft.JSInterop
 @using Soenneker.Blazor.DataTables.Options
 @using Soenneker.Extensions.String
@@ -14,23 +14,24 @@
 @implements IDataTable
 @implements IAsyncDisposable
 
-<div style="@(Visible ? "" : "display:none")">
-    <div class="dt-wrapper" style="position:relative;">
+<div style="@(Visible ? "" : "display:none")" >
+    <div class="dt-wrapper" style="position:relative;" >
         @if (ProcessingIndicator != null)
         {
             <div id="@(ElementId)-processing"
-                 class="datatable-processing-indicator" style="display:none">
+                 class="datatable-processing-indicator" style="display:none" >
                 @ProcessingIndicator
             </div>
         }
 
-        <table id="@ElementId" @ref="_elementReference" @attributes="Attributes">
+        <table id="@ElementId" @ref="_elementReference" @attributes="Attributes" >
             @ChildContent
         </table>
     </div>
 </div>
 
 @code {
+
 
     [Inject]
     private IDataTablesInterop DataTablesInterop { get; set; } = null!;
@@ -73,6 +74,10 @@
     public readonly string ElementId = $"datatable-{Guid.NewGuid().ToString()}";
     private readonly CancellationTokenSource _cTs = new();
     private ElementReference _elementReference;
+
+    private string? _continuationToken;
+
+    private string? _lastFingerprint;
 
     [Parameter]
     public bool Visible { get; set; } = true;
@@ -170,16 +175,30 @@
     {
         try
         {
-            // Try to deserialize directly into the external package's DataTablesServerSideRequest
             var request = JsonUtil.Deserialize<DataTableServerSideRequest>(dataTablesRequestJson);
 
-            if (OnServerSideRequest != null && request != null)
+            if (request == null)
             {
-                DataTableServerResponse result = await OnServerSideRequest(request);
+                return "{\"data\":[],\"recordsTotal\":0,\"recordsFiltered\":0,\"draw\":0}";
+            }
+
+            if (OnServerSideRequest != null)
+            {
+                request.ContinuationToken = _continuationToken;
+
+                string fp = Fingerprint(request);
+
+                if (fp != _lastFingerprint)
+                {
+                    _continuationToken = null;
+                    request.ContinuationToken = null;
+                    _lastFingerprint = fp;
+                }
+
+                DataTableServerResponse result = await OnServerSideRequest(request).NoSync();
                 return JsonUtil.Serialize(result);
             }
 
-            // Default empty response
             return "{\"data\":[],\"recordsTotal\":0,\"recordsFiltered\":0,\"draw\":0}";
         }
         catch (Exception ex)
@@ -187,6 +206,12 @@
             Logger.LogError(ex, "Error processing server-side request: {Message}", ex.Message);
             return "{\"data\":[],\"recordsTotal\":0,\"recordsFiltered\":0,\"draw\":0,\"error\":\"An error occurred while processing your request.\"}";
         }
+    }
+
+    private static string Fingerprint(DataTableServerSideRequest request)
+    {
+        // anything that changes the result set must appear here
+        return $"{request.Search?.Value}|{request.Length}|{JsonUtil.Serialize(request.Order)}";
     }
 
     public async ValueTask DisposeAsync()

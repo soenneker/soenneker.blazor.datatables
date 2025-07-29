@@ -38,21 +38,30 @@ public sealed class DataTableServerResponse
     public string? Error { get; set; }
 
     /// <summary>
+    /// If applicable, a storage continuation token that the client must send back
+    /// on the next request. Typically <c>null</c> when the current page is the last page. Optional.
+    /// </summary>
+    [JsonPropertyName("continuationToken")]
+    public string? ContinuationToken { get; set; }
+
+    /// <summary>
     /// Creates a success response for DataTables server-side processing.
     /// </summary>
     /// <param name="draw">The draw counter from the request.</param>
     /// <param name="recordsTotal">Total number of records before filtering.</param>
     /// <param name="recordsFiltered">Total number of records after filtering.</param>
     /// <param name="data">The data to be displayed.</param>
+    /// <param name="continuationToken"></param>
     /// <returns>A configured DataTablesServerResponse.</returns>
-    public static DataTableServerResponse Success(int draw, int recordsTotal, int recordsFiltered, object data)
+    public static DataTableServerResponse Success(int draw, int recordsTotal, int recordsFiltered, object data, string? continuationToken = null)
     {
         return new DataTableServerResponse
         {
             Draw = draw,
             TotalRecords = recordsTotal,
             TotalFilteredRecords = recordsFiltered,
-            Data = data
+            Data = data,
+            ContinuationToken = continuationToken
         };
     }
 
