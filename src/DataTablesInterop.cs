@@ -17,6 +17,7 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
 {
     private readonly IResourceLoader _resourceLoader;
     private readonly AsyncSingleton _scriptInitializer;
+    private readonly AsyncSingleton _styleInitializer;
 
     private const string _modulePath = "Soenneker.Blazor.DataTables/js/datatablesinterop.js";
     private const string _moduleName = "DataTablesInterop";
@@ -31,11 +32,18 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
 
             return new object();
         });
+
+        _styleInitializer = new AsyncSingleton(async (token, _) =>
+        {
+            await _resourceLoader.LoadStyle("_content/Soenneker.Blazor.DataTables/css/datatables.css", cancellationToken: token).NoSync();
+            return new object();
+        });
     }
 
-    public ValueTask Initialize(CancellationToken cancellationToken = default)
+    public async ValueTask Initialize(CancellationToken cancellationToken = default)
     {
-        return _scriptInitializer.Init(cancellationToken);
+        await _scriptInitializer.Init(cancellationToken).NoSync();
+        await _styleInitializer.Init(cancellationToken).NoSync();
     }
 
     public ValueTask CreateObserver(ElementReference elementReference, string elementId, CancellationToken cancellationToken = default)
@@ -46,7 +54,7 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
     public async ValueTask Create(ElementReference elementReference, string elementId, DotNetObjectReference<DataTable> dotNetObjectRef,
         DataTableOptions? configuration = null, CancellationToken cancellationToken = default)
     {
-        await _scriptInitializer.Init(cancellationToken).NoSync();
+        await Initialize(cancellationToken).NoSync();
 
         string? json = null;
 
@@ -71,5 +79,6 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
         await _resourceLoader.DisposeModule(_modulePath).NoSync();
 
         await _scriptInitializer.DisposeAsync().NoSync();
+        await _styleInitializer.DisposeAsync().NoSync();
     }
 }
