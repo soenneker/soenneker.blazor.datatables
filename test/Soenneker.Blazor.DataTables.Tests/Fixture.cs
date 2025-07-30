@@ -8,7 +8,7 @@ using Soenneker.Blazor.DataTables.Registrars;
 
 namespace Soenneker.Blazor.DataTables.Tests;
 
-public class DataFixture : UnitFixture
+public sealed class Fixture : UnitFixture
 {
     public override System.Threading.Tasks.ValueTask InitializeAsync()
     {

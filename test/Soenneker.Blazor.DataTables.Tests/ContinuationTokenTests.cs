@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using Moq;
-using Soenneker.Blazor.DataTables;
 using Soenneker.Blazor.DataTables.Dtos;
 using Soenneker.Blazor.DataTables.Options;
 using Soenneker.DataTables.Dtos.ServerSideRequest;
@@ -10,7 +9,7 @@ using System;
 
 namespace Soenneker.Blazor.DataTables.Tests;
 
-public class ContinuationTokenTests
+public sealed class ContinuationTokenTests
 {
     private readonly Mock<ILogger<DataTable>> _mockLogger = new();
 

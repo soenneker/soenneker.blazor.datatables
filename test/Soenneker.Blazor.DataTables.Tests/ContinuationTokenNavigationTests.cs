@@ -1,14 +1,11 @@
 using Microsoft.Extensions.Logging;
 using Moq;
-using Soenneker.Blazor.DataTables;
 using Soenneker.Blazor.DataTables.Options;
 using Xunit;
-using System.Collections.Generic;
-using System;
 
 namespace Soenneker.Blazor.DataTables.Tests;
 
-public class ContinuationTokenNavigationTests
+public sealed class ContinuationTokenNavigationTests
 {
     private readonly Mock<ILogger<DataTable>> _mockLogger = new();
 
