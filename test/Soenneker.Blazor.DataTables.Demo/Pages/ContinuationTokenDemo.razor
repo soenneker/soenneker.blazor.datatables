@@ -1,0 +1,228 @@
+@page "/continuation-token-demo"
+@using Microsoft.Extensions.Logging
+@using Soenneker.Blazor.DataTables
+@using Soenneker.Blazor.DataTables.Options
+@using Soenneker.Blazor.DataTables.Demo.Dtos
+@using Soenneker.Blazor.DataTables.Demo.Services
+@using Soenneker.Blazor.DataTables.Dtos
+@using Soenneker.DataTables.Dtos.ServerSideRequest
+@inject UserService UserService
+@inject ILogger<ContinuationTokenDemo> Logger
+
+<PageTitle>Continuation Token DataTable Demo</PageTitle>
+
+<div class="container mt-4">
+    <h1>Continuation Token DataTable Demo</h1>
+    <p class="lead">This demo shows how to use the DataTable component with continuation token-based pagination.</p>
+    
+    <div class="alert alert-info">
+        <strong>How it works:</strong> This demo simulates a service that returns continuation tokens for pagination. 
+        When you navigate to the next page, the continuation token from the previous response is sent with the next request.
+        The system stores the original tokens for each visited page, ensuring that when you navigate back to a previous page,
+        you get the same continuation token that was originally used to reach that page.
+        This is useful for services like Azure Table Storage, Cosmos DB, or other cloud storage solutions that use continuation tokens.
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5 class="mb-0">Controls</h5>
+        </div>
+        <div class="card-body">
+            <button class="btn btn-primary me-2" @onclick="ResetPagination">
+                <i class="fas fa-undo"></i> Reset Pagination
+            </button>
+            <button class="btn btn-info me-2" @onclick="ShowCurrentToken">
+                <i class="fas fa-info-circle"></i> Show Current Token
+            </button>
+            <span class="badge bg-secondary">Current Token: @(_currentToken ?? "None")</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <DataTable @ref="_dataTable"
+                       OnServerSideRequest="HandleServerSideRequest"
+                       Options="_tableOptions" 
+                       class="table table-sm dt-responsive table-striped" 
+                       style="width: 100%">
+                <thead>
+                    <tr>
+                        <th data-data="id">ID</th>
+                        <th data-data="name">Name</th>
+                        <th data-data="email">Email</th>
+                        <th data-data="role">Role</th>
+                        <th data-data="createdAt">Created At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </DataTable>
+        </div>
+    </div>
+</div>
+
+@code {
+    private DataTable _dataTable = null!;
+    private string? _currentToken;
+
+    private readonly DataTableOptions _tableOptions = new()
+    {
+        ServerSide = true,
+        PageLength = 5, // Smaller page size to demonstrate pagination
+        Processing = true
+    };
+
+    private int _drawCounter = 0;
+
+    private async Task<DataTableServerResponse> HandleServerSideRequest(DataTableServerSideRequest request)
+    {
+        try
+        {
+            _drawCounter++;
+
+            // Log the continuation token being sent
+            Logger.LogInformation("Request continuation token: {Token}", request.ContinuationToken);
+            Logger.LogInformation("Request start: {Start}, length: {Length}", request.Start, request.Length);
+
+            // Convert orderColumn to column name
+            string? orderBy = null;
+            if (request.Order?.Count > 0)
+            {
+                orderBy = request.Order[0].Column switch
+                {
+                    0 => "id",
+                    1 => "name",
+                    2 => "email",
+                    3 => "role",
+                    4 => "createdAt",
+                    _ => null
+                };
+            }
+
+            int pageSize = request.Length;
+            string? searchTerm = request.Search?.Value;
+            string? orderDirection = request.Order?.Count > 0 ? request.Order[0].Dir : null;
+
+            // Simulate a service that uses continuation tokens
+            (List<UserDto> data, int totalRecords, int totalFilteredRecords, string? continuationToken) result = await SimulateContinuationTokenService(
+                pageSize, 
+                orderBy, 
+                orderDirection, 
+                searchTerm, 
+                request.ContinuationToken);
+
+            // Update the current token for display
+            _currentToken = result.continuationToken;
+            
+            // Log the response continuation token
+            Logger.LogInformation("Response continuation token: {Token}", result.continuationToken);
+            Logger.LogInformation("Response data count: {Count}", result.data.Count);
+
+            // Note: The DataTable component will automatically calculate the appropriate
+            // TotalRecords and TotalFilteredRecords values to make DataTables think
+            // it's using traditional pagination while actually using continuation tokens.
+            return DataTableServerResponse.Success(
+                _drawCounter, 
+                result.totalRecords, 
+                result.totalFilteredRecords, 
+                result.data, 
+                result.continuationToken);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error processing server-side request");
+            return DataTableServerResponse.Fail(_drawCounter, "An error occurred while processing your request. Please try again later.");
+        }
+    }
+
+    private async Task<(List<UserDto> data, int totalRecords, int totalFilteredRecords, string? continuationToken)> 
+        SimulateContinuationTokenService(int pageSize, string? orderBy, string? orderDirection, string? searchTerm, string? continuationToken)
+    {
+        // Simulate network delay
+        await Task.Delay(500);
+
+        // Get all users (in a real scenario, this would be a database query)
+        List<UserDto> allUsers = await UserService.GetAllUsers();
+        
+        // Apply search filter
+        List<UserDto> filteredUsers = allUsers;
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            filteredUsers = allUsers.Where(u => 
+                u.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                u.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                u.Role.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+            ).ToList();
+        }
+
+        // Apply sorting
+        if (!string.IsNullOrEmpty(orderBy))
+        {
+            filteredUsers = orderBy switch
+            {
+                "id" => orderDirection == "desc" ? filteredUsers.OrderByDescending(u => u.Id).ToList() : filteredUsers.OrderBy(u => u.Id).ToList(),
+                "name" => orderDirection == "desc" ? filteredUsers.OrderByDescending(u => u.Name).ToList() : filteredUsers.OrderBy(u => u.Name).ToList(),
+                "email" => orderDirection == "desc" ? filteredUsers.OrderByDescending(u => u.Email).ToList() : filteredUsers.OrderBy(u => u.Email).ToList(),
+                "role" => orderDirection == "desc" ? filteredUsers.OrderByDescending(u => u.Role).ToList() : filteredUsers.OrderBy(u => u.Role).ToList(),
+                "createdAt" => orderDirection == "desc" ? filteredUsers.OrderByDescending(u => u.CreatedAt).ToList() : filteredUsers.OrderBy(u => u.CreatedAt).ToList(),
+                _ => filteredUsers
+            };
+        }
+
+        int totalRecords = allUsers.Count;
+        int totalFilteredRecords = filteredUsers.Count;
+
+        // Simulate continuation token logic
+        // In a real scenario, this would be based on the last item in the current page
+        string? nextContinuationToken = null;
+        List<UserDto> pageData;
+
+        if (string.IsNullOrEmpty(continuationToken))
+        {
+            // First page - start from the beginning
+            pageData = filteredUsers.Take(pageSize).ToList();
+            
+            // Generate continuation token for next page if there are more items
+            if (filteredUsers.Count > pageSize)
+            {
+                nextContinuationToken = $"page_{pageSize}_{filteredUsers[pageSize - 1].Id}";
+            }
+        }
+        else
+        {
+            // Parse continuation token to get the starting position
+            // In a real scenario, this would be more sophisticated
+            string[] tokenParts = continuationToken.Split('_');
+            if (tokenParts.Length >= 3 && int.TryParse(tokenParts[1], out int skipCount))
+            {
+                pageData = filteredUsers.Skip(skipCount).Take(pageSize).ToList();
+                
+                // Generate next continuation token if there are more items
+                if (filteredUsers.Count > skipCount + pageSize)
+                {
+                    nextContinuationToken = $"page_{skipCount + pageSize}_{filteredUsers[skipCount + pageSize - 1].Id}";
+                }
+            }
+            else
+            {
+                // Invalid token - return empty result
+                pageData = new List<UserDto>();
+            }
+        }
+
+        return (pageData, totalRecords, totalFilteredRecords, nextContinuationToken);
+    }
+
+    private void ResetPagination()
+    {
+        _dataTable.ResetContinuationToken();
+        _currentToken = null;
+        StateHasChanged();
+    }
+
+    private void ShowCurrentToken()
+    {
+        // In a real application, you might show this in a modal or alert
+        Logger.LogInformation("Current continuation token: {Token}", _currentToken);
+    }
+} 

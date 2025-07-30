@@ -69,14 +69,15 @@ export class DataTablesInterop {
                         }
                         
                         // Parse the result
-                        const { data: tableData, totalRecords, totalFilteredRecords } = JSON.parse(result);
+                        const { data: tableData, totalRecords, totalFilteredRecords, continuationToken } = JSON.parse(result);
                         
                         // Return the data in DataTables format
                         callback({
                             draw: data.draw,
                             recordsTotal: totalRecords,
                             recordsFiltered: totalFilteredRecords,
-                            data: tableData
+                            data: tableData,
+                            continuationToken: continuationToken
                         });
                     } catch (error) {
                         // Hide custom processing indicator on error

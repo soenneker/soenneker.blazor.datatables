@@ -69,4 +69,16 @@ public class UserService
 
         return (data, totalRecords, totalFilteredRecords);
     }
+
+    /// <summary>
+    /// Gets all users without pagination. Used for continuation token demo.
+    /// </summary>
+    /// <returns>All users in the system.</returns>
+    public async Task<List<UserDto>> GetAllUsers()
+    {
+        // Simulate server delay
+        await DelayUtil.Delay(100, _logger);
+        
+        return _users.ToList();
+    }
 }

@@ -76,6 +76,7 @@
     private ElementReference _elementReference;
 
     private string? _continuationToken;
+    private readonly DataTableContinuationTokenPaging _pagingHelper = new();
 
     private string? _lastFingerprint;
 
@@ -184,19 +185,49 @@
 
             if (OnServerSideRequest != null)
             {
-                request.ContinuationToken = _continuationToken;
-
                 string fp = Fingerprint(request);
 
                 if (fp != _lastFingerprint)
                 {
                     _continuationToken = null;
+                    _pagingHelper.Reset();
                     request.ContinuationToken = null;
                     _lastFingerprint = fp;
                 }
 
+                // Use the pagination helper to determine the continuation token
+                string? continuationToken = _pagingHelper.UpdateVirtualPage(request.Start, request.Length, _continuationToken);
+                request.ContinuationToken = continuationToken;
+
                 DataTableServerResponse result = await OnServerSideRequest(request).NoSync();
-                return JsonUtil.Serialize(result);
+                
+                // Update the continuation token from the response
+                _continuationToken = result.ContinuationToken;
+                
+                // Update the pagination helper with the response data
+                if (result.Data is IEnumerable<object> dataEnumerable)
+                {
+                    int recordCount = dataEnumerable.Count();
+                    int currentPage = request.Start / request.Length;
+                    string? tokenUsedForThisPage = request.ContinuationToken;
+                    
+                    // Store the continuation token from the response for the next page
+                    // Also store the token that was used for the current page for backward navigation
+                    _pagingHelper.UpdateFromResponse(request.Length, recordCount, result.ContinuationToken, tokenUsedForThisPage);
+                }
+                
+                // Override the response with calculated pagination values
+                var modifiedResult = new DataTableServerResponse
+                {
+                    Draw = result.Draw,
+                    Data = result.Data,
+                    Error = result.Error,
+                    ContinuationToken = result.ContinuationToken,
+                    TotalRecords = _pagingHelper.CalculateTotalRecords(request.Length),
+                    TotalFilteredRecords = _pagingHelper.CalculateFilteredRecords()
+                };
+                
+                return JsonUtil.Serialize(modifiedResult)!;
             }
 
             return "{\"data\":[],\"recordsTotal\":0,\"recordsFiltered\":0,\"draw\":0}";
@@ -212,6 +243,27 @@
     {
         // anything that changes the result set must appear here
         return $"{request.Search?.Value}|{request.Length}|{JsonUtil.Serialize(request.Order)}";
+    }
+
+    /// <summary>
+    /// Resets the continuation token and clears the current page state.
+    /// This is useful when you want to start pagination from the beginning.
+    /// </summary>
+    public void ResetContinuationToken()
+    {
+        _continuationToken = null;
+        _lastFingerprint = null;
+        _pagingHelper.Reset();
+    }
+
+    /// <summary>
+    /// Sets a specific continuation token for the next request.
+    /// This is useful for implementing custom pagination logic.
+    /// </summary>
+    /// <param name="continuationToken">The continuation token to use for the next request.</param>
+    public void SetContinuationToken(string? continuationToken)
+    {
+        _continuationToken = continuationToken;
     }
 
     public async ValueTask DisposeAsync()
