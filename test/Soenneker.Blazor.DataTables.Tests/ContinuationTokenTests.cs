@@ -1,11 +1,11 @@
 using Microsoft.Extensions.Logging;
 using Moq;
-using Soenneker.Blazor.DataTables.Dtos;
 using Soenneker.Blazor.DataTables.Options;
 using Soenneker.DataTables.Dtos.ServerSideRequest;
 using Xunit;
 using System.Collections.Generic;
 using System;
+using Soenneker.DataTables.Dtos.ServerResponse;
 
 namespace Soenneker.Blazor.DataTables.Tests;
 

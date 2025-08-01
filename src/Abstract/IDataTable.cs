@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Components;
-using Soenneker.Blazor.DataTables.Dtos;
 using Soenneker.Blazor.DataTables.Options;
 using Soenneker.DataTables.Dtos.ServerSideRequest;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Soenneker.DataTables.Dtos.ServerResponse;
 
 namespace Soenneker.Blazor.DataTables.Abstract;
 
