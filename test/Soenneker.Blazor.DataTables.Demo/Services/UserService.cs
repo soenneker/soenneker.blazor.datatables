@@ -4,7 +4,9 @@ using Soenneker.Utils.Delay;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Soenneker.Extensions.Task;
 
 namespace Soenneker.Blazor.DataTables.Demo.Services;
 
@@ -30,10 +32,10 @@ public class UserService
     }
 
     public async Task<(List<UserDto> Data, int TotalRecords, int TotalFilteredRecords)> GetUsers(int pageNumber, int pageSize, string? orderBy = null,
-        string? orderDirection = null, string? searchTerm = null)
+        string? orderDirection = null, string? searchTerm = null, CancellationToken cancellationToken = default)
     {
         // Simulate server delay
-        await DelayUtil.Delay(500, _logger);
+        await DelayUtil.Delay(500, _logger, cancellationToken).NoSync();
 
         IQueryable<UserDto> query = _users.AsQueryable();
 
@@ -73,12 +75,13 @@ public class UserService
     /// <summary>
     /// Gets all users without pagination. Used for continuation token demo.
     /// </summary>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>All users in the system.</returns>
-    public async Task<List<UserDto>> GetAllUsers()
+    public async Task<List<UserDto>> GetAllUsers(CancellationToken cancellationToken = default)
     {
         // Simulate server delay
-        await DelayUtil.Delay(100, _logger);
-        
+        await DelayUtil.Delay(100, _logger, cancellationToken).NoSync();
+
         return _users.ToList();
     }
 }

@@ -40,8 +40,8 @@ public interface IDataTable
     /// <summary>
     /// Invoked from JavaScript when the DataTable initialization is complete.
     /// </summary>
-    /// <returns>A Task representing the callback logic.</returns>
-    Task OnInitializedJs();
+    /// <returns>A ValueTask representing the callback logic.</returns>
+    ValueTask OnInitializedJs();
 
     EventCallback OnInitialize { get; set; }
 

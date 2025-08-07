@@ -1,4 +1,5 @@
 @page "/custom-loading-demo"
+@using System.Threading
 @using Microsoft.Extensions.Logging
 @using Soenneker.Blazor.DataTables
 @using Soenneker.Blazor.DataTables.Options
@@ -6,6 +7,7 @@
 @using Soenneker.Blazor.DataTables.Demo.Services
 @using Soenneker.DataTables.Dtos.ServerResponse
 @using Soenneker.DataTables.Dtos.ServerSideRequest
+@using Soenneker.Extensions.Task
 @inject UserService UserService
 @inject ILogger<CustomLoadingDemo> Logger
 
@@ -184,7 +186,7 @@
             _drawCounter++;
 
             // Simulate some processing time
-            await Task.Delay(1000);
+            await Task.Delay(1000).NoSync();
 
             // Convert orderColumn to column name
             string? orderBy = null;
@@ -206,7 +208,7 @@
             string? searchTerm = request.Search?.Value;
             string? orderDirection = request.Order?.Count > 0 ? request.Order[0].Dir : null;
 
-            (List<UserDto> data, int totalRecords, int totalFilteredRecords) = await UserService.GetUsers(pageNumber, pageSize, orderBy, orderDirection, searchTerm);
+            (List<UserDto> data, int totalRecords, int totalFilteredRecords) = await UserService.GetUsers(pageNumber, pageSize, orderBy, orderDirection, searchTerm, CancellationToken.None).NoSync();
 
             return DataTableServerResponse.Success(_drawCounter, totalRecords, totalFilteredRecords, data);
         }

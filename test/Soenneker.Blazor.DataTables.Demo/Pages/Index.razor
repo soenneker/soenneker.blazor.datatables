@@ -2,6 +2,7 @@
 @using Microsoft.Extensions.Logging
 @using Soenneker.Blazor.DataTables.Demo.Dtos
 @using Soenneker.Blazor.DataTables.Options
+@using Soenneker.Extensions.ValueTask
 @using Soenneker.Utils.AutoBogus
 
 @inject ILogger<Index> Logger
@@ -11,33 +12,33 @@
 <p>This page demonstrates some of the uses of the DataTables component.</p>
 
 <Container>
-    <DataTable @ref="_dataTable" Options="_options" class="table table-sm dt-responsive table-striped" style="width: 100%" OnInitialize="OnDataTableInitialized">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Position</th>
-                    <th>Office</th>
-                    <th>Age</th>
-                    <th>Start date</th>
-                    <th>Salary</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (_renderData)
+    <DataTable @ref="_dataTable" Options="_options" class="table table-sm dt-responsive table-striped" style="width: 100%" OnInitialize="OnDataTableInitialized" >
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Age</th>
+                <th>Start date</th>
+                <th>Salary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (_renderData)
+            {
+                @foreach (Employee person in _people)
                 {
-                    @foreach (Employee person in _people)
-                    {
-                        <tr>
-                            <td>@person.Name</td>
-                            <td>@person.Position</td>
-                            <td>@person.City</td>
-                            <td>@person.Age</td>
-                            <td>@person.StartDate.ToString("yyyy/MM/dd")</td>
-                            <td>$@person.Salary</td>
-                        </tr>
-                    }
+                    <tr>
+                        <td>@person.Name</td>
+                        <td>@person.Position</td>
+                        <td>@person.City</td>
+                        <td>@person.Age</td>
+                        <td>@person.StartDate.ToString("yyyy/MM/dd")</td>
+                        <td>$@person.Salary</td>
+                    </tr>
                 }
-            </tbody>
+            }
+        </tbody>
     </DataTable>
     <br />
 
@@ -85,12 +86,12 @@
 
     private async Task Refresh()
     {
-        await _dataTable.RefreshWithDomUpdate(() => { _people = GeneratePeople(); });
+        await _dataTable.RefreshWithDomUpdate(() => { _people = GeneratePeople(); }).NoSync();
     }
 
     private async Task Recreate()
     {
-        await _dataTable.RecreateWithDomUpdate(() => { _people = GeneratePeople(); });
+        await _dataTable.RecreateWithDomUpdate(() => { _people = GeneratePeople(); }).NoSync();
     }
 
     private void ClearViaData()

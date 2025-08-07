@@ -12,6 +12,8 @@ using Serilog;
 using Serilog.Debugging;
 using Soenneker.Blazor.DataTables.Demo.Services;
 using Soenneker.Blazor.DataTables.Registrars;
+using Soenneker.Extensions.Task;
+using Soenneker.Extensions.ValueTask;
 using Soenneker.Serilog.Sinks.Browser.Blazor.Registrars;
 
 namespace Soenneker.Blazor.DataTables.Demo;
@@ -47,7 +49,7 @@ public class DataProgram
 
             SetGlobalLogger(jsRuntime);
 
-            await host.RunAsync();
+            await host.RunAsync().NoSync();
         }
         catch (Exception e)
         {
@@ -56,7 +58,7 @@ public class DataProgram
         }
         finally
         {
-            await Log.CloseAndFlushAsync();
+            await Log.CloseAndFlushAsync().NoSync();
         }
     }
 
