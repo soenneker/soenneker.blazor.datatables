@@ -57,6 +57,6 @@
         <PackageReference Include="Soenneker.DataTables.Dtos.ServerResponse" Version="3.0.2" />
         <PackageReference Include="Soenneker.DataTables.Dtos.ServerSideRequest" Version="3.0.3" />
         <PackageReference Include="Soenneker.Extensions.CancellationTokens" Version="3.0.1" />
-        <PackageReference Include="Soenneker.Quark.Components.Cancellable" Version="3.0.1" />
+        <PackageReference Include="Soenneker.Quark.Components.Cancellable" Version="3.0.2" />
     </ItemGroup>
 </Project>
