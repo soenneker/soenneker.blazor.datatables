@@ -54,7 +54,7 @@
         <PackageReference Include="Soenneker.Blazor.Utils.InteropEventListener" Version="3.0.3689" />
         <PackageReference Include="Soenneker.Blazor.Utils.ResourceLoader" Version="3.0.1487" />
         <PackageReference Include="Soenneker.DataTables.Dtos.Column" Version="3.0.4" />
-        <PackageReference Include="Soenneker.DataTables.Dtos.ServerResponse" Version="3.0.1" />
+        <PackageReference Include="Soenneker.DataTables.Dtos.ServerResponse" Version="3.0.2" />
         <PackageReference Include="Soenneker.DataTables.Dtos.ServerSideRequest" Version="3.0.3" />
     </ItemGroup>
 </Project>
