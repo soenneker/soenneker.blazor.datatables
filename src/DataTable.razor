@@ -10,7 +10,9 @@
 @using Soenneker.DataTables.Dtos.ServerSideRequest
 @using Soenneker.Extensions.Task
 @using Soenneker.Utils.Json
+@using Soenneker.Extensions.CancellationTokens
 
+@inherits Soenneker.Quark.Components.Cancellable.CancellableComponent
 @implements IDataTable
 @implements IAsyncDisposable
 
@@ -72,7 +74,6 @@
 
     private DotNetObjectReference<DataTable>? _dotNetReference;
     public readonly string ElementId = $"datatable-{Guid.NewGuid().ToString()}";
-    private readonly CancellationTokenSource _cTs = new();
     private ElementReference _elementReference;
 
     private string? _continuationToken;
@@ -87,7 +88,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await DataTablesInterop.Initialize(_cTs.Token).NoSync();
+        await DataTablesInterop.Initialize(CancellationToken).NoSync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -112,22 +113,28 @@
 
         _dotNetReference = DotNetObjectReference.Create(this);
 
-        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _cTs.Token);
+        CancellationToken linked = CancellationToken.Link(cancellationToken, out CancellationTokenSource? cts);
 
-        await DataTablesInterop.Create(_elementReference, ElementId, _dotNetReference, Options, linkedCts.Token).NoSync();
-        await DataTablesInterop.CreateObserver(_elementReference, ElementId, linkedCts.Token).NoSync();
+        using (cts)
+        {
+            await DataTablesInterop.Create(_elementReference, ElementId, _dotNetReference, Options, linked).NoSync();
+            await DataTablesInterop.CreateObserver(_elementReference, ElementId, linked).NoSync();
+        }
     }
 
     public async ValueTask RefreshWithDomUpdate(Func<ValueTask> domMutator, CancellationToken cancellationToken = default)
     {
-        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _cTs.Token);
+        CancellationToken linked = CancellationToken.Link(cancellationToken, out CancellationTokenSource? cts);
 
-        await domMutator().NoSync();
+        using (cts)
+        {
+            await domMutator().NoSync();
 
-        StateHasChanged();
-        await Task.Yield();
+            StateHasChanged();
+            await Task.Yield();
 
-        await DataTablesInterop.Refresh(ElementId, linkedCts.Token).NoSync();
+            await DataTablesInterop.Refresh(ElementId, linked).NoSync();
+        }
     }
 
     public ValueTask RefreshWithDomUpdate(Action domMutator, CancellationToken cancellationToken = default)
@@ -141,15 +148,18 @@
 
     public async ValueTask RecreateWithDomUpdate(Func<ValueTask> domMutator, CancellationToken cancellationToken = default)
     {
-        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _cTs.Token);
+        CancellationToken linked = CancellationToken.Link(cancellationToken, out CancellationTokenSource? cts);
 
-        await domMutator().NoSync();
+        using (cts)
+        {
+            await domMutator().NoSync();
 
-        StateHasChanged();
-        await Task.Yield();
+            StateHasChanged();
+            await Task.Yield();
 
-        await DataTablesInterop.Destroy(_elementReference, linkedCts.Token).NoSync();
-        await Initialize(null, linkedCts.Token).NoSync();
+            await DataTablesInterop.Destroy(_elementReference, linked).NoSync();
+            await Initialize(null, linked).NoSync();
+        }
     }
 
     public ValueTask RecreateWithDomUpdate(Action domMutator, CancellationToken cancellationToken = default)
@@ -266,13 +276,11 @@
         _continuationToken = continuationToken;
     }
 
-    public async ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
+        await base.DisposeAsync().NoSync();
+
         _dotNetReference?.Dispose();
-
-        await _cTs.CancelAsync().NoSync();
-        _cTs.Dispose();
-
         await OnDestroy.InvokeAsync().NoSync();
     }
 
