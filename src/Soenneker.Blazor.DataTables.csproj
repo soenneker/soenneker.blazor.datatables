@@ -52,7 +52,7 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.8" />
         <PackageReference Include="Soenneker.Blazor.Extensions.EventCallback" Version="3.0.420" />
         <PackageReference Include="Soenneker.Blazor.Utils.InteropEventListener" Version="3.0.3694" />
-        <PackageReference Include="Soenneker.Blazor.Utils.ResourceLoader" Version="3.0.1491" />
+        <PackageReference Include="Soenneker.Blazor.Utils.ResourceLoader" Version="3.0.1492" />
         <PackageReference Include="Soenneker.DataTables.Dtos.Column" Version="3.0.5" />
         <PackageReference Include="Soenneker.DataTables.Dtos.ServerResponse" Version="3.0.2" />
         <PackageReference Include="Soenneker.DataTables.Dtos.ServerSideRequest" Version="3.0.4" />
