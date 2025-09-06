@@ -49,7 +49,7 @@ public class DataProgram
 
             SetGlobalLogger(jsRuntime);
 
-            await host.RunAsync().NoSync();
+            await host.RunAsync();
         }
         catch (Exception e)
         {
@@ -58,7 +58,7 @@ public class DataProgram
         }
         finally
         {
-            await Log.CloseAndFlushAsync().NoSync();
+            await Log.CloseAndFlushAsync();
         }
     }
 

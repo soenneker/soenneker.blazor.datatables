@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using Soenneker.Blazor.DataTables.Options.Responsive;
 
 namespace Soenneker.Blazor.DataTables.Options;

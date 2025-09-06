@@ -1,4 +1,4 @@
-﻿using Soenneker.Blazor.DataTables.Options.Language;
+using Soenneker.Blazor.DataTables.Options.Language;
 using Soenneker.Blazor.DataTables.Options.Layout;
 using Soenneker.Blazor.DataTables.Options.RowGroup;
 using Soenneker.Blazor.DataTables.Options.RowReorder;

@@ -28,22 +28,22 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
 
         _scriptInitializer = new AsyncSingleton(async (token, _) =>
         {
-            await _resourceLoader.ImportModuleAndWaitUntilAvailable(_modulePath, _moduleName, 100, token).NoSync();
+            await _resourceLoader.ImportModuleAndWaitUntilAvailable(_modulePath, _moduleName, 100, token);
 
             return new object();
         });
 
         _styleInitializer = new AsyncSingleton(async (token, _) =>
         {
-            await _resourceLoader.LoadStyle("_content/Soenneker.Blazor.DataTables/css/datatables.css", cancellationToken: token).NoSync();
+            await _resourceLoader.LoadStyle("_content/Soenneker.Blazor.DataTables/css/datatables.css", cancellationToken: token);
             return new object();
         });
     }
 
     public async ValueTask Initialize(CancellationToken cancellationToken = default)
     {
-        await _scriptInitializer.Init(cancellationToken).NoSync();
-        await _styleInitializer.Init(cancellationToken).NoSync();
+        await _scriptInitializer.Init(cancellationToken);
+        await _styleInitializer.Init(cancellationToken);
     }
 
     public ValueTask CreateObserver(ElementReference elementReference, string elementId, CancellationToken cancellationToken = default)
@@ -54,14 +54,14 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
     public async ValueTask Create(ElementReference elementReference, string elementId, DotNetObjectReference<DataTable> dotNetObjectRef,
         DataTableOptions? configuration = null, CancellationToken cancellationToken = default)
     {
-        await Initialize(cancellationToken).NoSync();
+        await Initialize(cancellationToken);
 
         string? json = null;
 
         if (configuration != null)
             json = JsonUtil.Serialize(configuration);
 
-        await JsRuntime.InvokeVoidAsync($"{_moduleName}.create", cancellationToken, elementReference, elementId, json, dotNetObjectRef).NoSync();
+        await JsRuntime.InvokeVoidAsync($"{_moduleName}.create", cancellationToken, elementReference, elementId, json, dotNetObjectRef);
     }
 
     public ValueTask Destroy(ElementReference elementReference, CancellationToken cancellationToken = default)
@@ -76,9 +76,9 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
 
     public async ValueTask DisposeAsync()
     {
-        await _resourceLoader.DisposeModule(_modulePath).NoSync();
+        await _resourceLoader.DisposeModule(_modulePath);
 
-        await _scriptInitializer.DisposeAsync().NoSync();
-        await _styleInitializer.DisposeAsync().NoSync();
+        await _scriptInitializer.DisposeAsync();
+        await _styleInitializer.DisposeAsync();
     }
 }

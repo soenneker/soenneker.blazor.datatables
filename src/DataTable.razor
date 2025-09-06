@@ -1,4 +1,4 @@
-﻿@using System.Threading
+@using System.Threading
 @using Microsoft.JSInterop
 @using Soenneker.Blazor.DataTables.Options
 @using Soenneker.Extensions.String
@@ -88,7 +88,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await DataTablesInterop.Initialize(CancellationToken).NoSync();
+        await DataTablesInterop.Initialize(CancellationToken);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -102,7 +102,7 @@
         {
             _elementInitialized = true;
 
-            await Initialize().NoSync();
+            await Initialize();
         }
     }
 
@@ -117,8 +117,8 @@
 
         using (cts)
         {
-            await DataTablesInterop.Create(_elementReference, ElementId, _dotNetReference, Options, linked).NoSync();
-            await DataTablesInterop.CreateObserver(_elementReference, ElementId, linked).NoSync();
+            await DataTablesInterop.Create(_elementReference, ElementId, _dotNetReference, Options, linked);
+            await DataTablesInterop.CreateObserver(_elementReference, ElementId, linked);
         }
     }
 
@@ -128,12 +128,12 @@
 
         using (cts)
         {
-            await domMutator().NoSync();
+            await domMutator();
 
             StateHasChanged();
             await Task.Yield();
 
-            await DataTablesInterop.Refresh(ElementId, linked).NoSync();
+            await DataTablesInterop.Refresh(ElementId, linked);
         }
     }
 
@@ -152,13 +152,13 @@
 
         using (cts)
         {
-            await domMutator().NoSync();
+            await domMutator();
 
             StateHasChanged();
             await Task.Yield();
 
-            await DataTablesInterop.Destroy(_elementReference, linked).NoSync();
-            await Initialize(null, linked).NoSync();
+            await DataTablesInterop.Destroy(_elementReference, linked);
+            await Initialize(null, linked);
         }
     }
 
@@ -177,7 +177,7 @@
     {
         if (OnInitialize.HasDelegate)
         {
-            await OnInitialize.InvokeAsync().NoSync();
+            await OnInitialize.InvokeAsync();
         }
     }
 
@@ -209,7 +209,7 @@
                 string? continuationToken = _pagingHelper.UpdateVirtualPage(request.Start, request.Length, _continuationToken);
                 request.ContinuationToken = continuationToken;
 
-                DataTableServerResponse result = await OnServerSideRequest(request).NoSync();
+                DataTableServerResponse result = await OnServerSideRequest(request);
                 
                 // Update the continuation token from the response
                 _continuationToken = result.ContinuationToken;
@@ -278,10 +278,10 @@
 
     public override async ValueTask DisposeAsync()
     {
-        await base.DisposeAsync().NoSync();
+        await base.DisposeAsync();
 
         _dotNetReference?.Dispose();
-        await OnDestroy.InvokeAsync().NoSync();
+        await OnDestroy.InvokeAsync();
     }
 
 }

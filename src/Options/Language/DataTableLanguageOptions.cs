@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using Soenneker.Blazor.DataTables.Options.Language.Aria;
 using Soenneker.Blazor.DataTables.Options.Language.Paginate;
 using Soenneker.Blazor.DataTables.Options.Language.StateRestore;

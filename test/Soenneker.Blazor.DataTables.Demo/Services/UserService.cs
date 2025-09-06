@@ -35,7 +35,7 @@ public class UserService
         string? orderDirection = null, string? searchTerm = null, CancellationToken cancellationToken = default)
     {
         // Simulate server delay
-        await DelayUtil.Delay(500, _logger, cancellationToken).NoSync();
+        await DelayUtil.Delay(500, _logger, cancellationToken);
 
         IQueryable<UserDto> query = _users.AsQueryable();
 
@@ -80,7 +80,7 @@ public class UserService
     public async Task<List<UserDto>> GetAllUsers(CancellationToken cancellationToken = default)
     {
         // Simulate server delay
-        await DelayUtil.Delay(100, _logger, cancellationToken).NoSync();
+        await DelayUtil.Delay(100, _logger, cancellationToken);
 
         return _users.ToList();
     }

@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 @using Microsoft.Extensions.Logging
 @using Soenneker.Blazor.DataTables.Demo.Dtos
 @using Soenneker.Blazor.DataTables.Options
@@ -86,12 +86,12 @@
 
     private async Task Refresh()
     {
-        await _dataTable.RefreshWithDomUpdate(() => { _people = GeneratePeople(); }).NoSync();
+        await _dataTable.RefreshWithDomUpdate(() => { _people = GeneratePeople(); });
     }
 
     private async Task Recreate()
     {
-        await _dataTable.RecreateWithDomUpdate(() => { _people = GeneratePeople(); }).NoSync();
+        await _dataTable.RecreateWithDomUpdate(() => { _people = GeneratePeople(); });
     }
 
     private void ClearViaData()

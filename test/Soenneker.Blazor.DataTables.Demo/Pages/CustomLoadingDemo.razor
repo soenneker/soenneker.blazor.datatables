@@ -186,7 +186,7 @@
             _drawCounter++;
 
             // Simulate some processing time
-            await Task.Delay(1000).NoSync();
+            await Task.Delay(1000);
 
             // Convert orderColumn to column name
             string? orderBy = null;
@@ -208,7 +208,7 @@
             string? searchTerm = request.Search?.Value;
             string? orderDirection = request.Order?.Count > 0 ? request.Order[0].Dir : null;
 
-            (List<UserDto> data, int totalRecords, int totalFilteredRecords) = await UserService.GetUsers(pageNumber, pageSize, orderBy, orderDirection, searchTerm, CancellationToken.None).NoSync();
+            (List<UserDto> data, int totalRecords, int totalFilteredRecords) = await UserService.GetUsers(pageNumber, pageSize, orderBy, orderDirection, searchTerm, CancellationToken.None);
 
             return DataTableServerResponse.Success(_drawCounter, totalRecords, totalFilteredRecords, data);
         }

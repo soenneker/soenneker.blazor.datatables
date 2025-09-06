@@ -130,10 +130,10 @@
     private async Task<(List<UserDto> data, int totalRecords, int totalFilteredRecords, string? continuationToken)> SimulateContinuationTokenService(int pageSize, string? orderBy, string? orderDirection, string? searchTerm, string? continuationToken)
     {
         // Simulate network delay
-        await Task.Delay(500).NoSync();
+        await Task.Delay(500);
 
         // Get all users (in a real scenario, this would be a database query)
-        List<UserDto> allUsers = await UserService.GetAllUsers(CancellationToken.None).NoSync();
+        List<UserDto> allUsers = await UserService.GetAllUsers(CancellationToken.None);
 
         // Apply search filter
         List<UserDto> filteredUsers = allUsers;

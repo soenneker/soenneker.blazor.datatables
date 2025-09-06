@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Soenneker.Blazor.DataTables.Demo.Dtos;
 
