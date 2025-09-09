@@ -70,7 +70,7 @@ public class DataProgram
         {
             builder.ClearProviders();
 
-            builder.AddSerilog(dispose: true);
+            builder.AddSerilog(dispose: false);
         });
     }
 
