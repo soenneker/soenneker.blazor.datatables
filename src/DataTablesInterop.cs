@@ -4,7 +4,6 @@ using Soenneker.Blazor.DataTables.Abstract;
 using Soenneker.Blazor.DataTables.Options;
 using Soenneker.Blazor.Utils.EventListeningInterop;
 using Soenneker.Blazor.Utils.ResourceLoader.Abstract;
-using Soenneker.Extensions.ValueTask;
 using Soenneker.Utils.AsyncSingleton;
 using Soenneker.Utils.Json;
 using System.Threading;

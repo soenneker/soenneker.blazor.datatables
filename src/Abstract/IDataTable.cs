@@ -2,32 +2,22 @@ using Microsoft.AspNetCore.Components;
 using Soenneker.Blazor.DataTables.Options;
 using Soenneker.DataTables.Dtos.ServerSideRequest;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Soenneker.DataTables.Dtos.ServerResponse;
+using Soenneker.Quark.Components.Cancellable.Abstract;
 
 namespace Soenneker.Blazor.DataTables.Abstract;
 
 /// <summary>
 /// Defines the contract for a Blazor DataTable component with initialization, lifecycle management, and auto-render support.
 /// </summary>
-public interface IDataTable
+public interface IDataTable : ICancellableElement
 {
-    /// <summary>
-    /// Gets or sets additional attributes to apply to the underlying &lt;table&gt; element.
-    /// </summary>
-    Dictionary<string, object?>? Attributes { get; set; }
-
     /// <summary>
     /// Gets or sets the DataTable configuration options.
     /// </summary>
     DataTableOptions Options { get; set; }
-
-    /// <summary>
-    /// Gets or sets the table content to render inside the component.
-    /// </summary>
-    RenderFragment? ChildContent { get; set; }
 
     /// <summary>
     /// Initializes the DataTable instance on the current table element.

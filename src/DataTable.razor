@@ -2,19 +2,16 @@
 @using Microsoft.JSInterop
 @using Soenneker.Blazor.DataTables.Options
 @using Soenneker.Extensions.String
-@using Soenneker.Extensions.ValueTask
 @using Soenneker.Blazor.DataTables.Abstract
 @using Soenneker.Blazor.Utils.InteropEventListener.Abstract
 @using Microsoft.Extensions.Logging
 @using Soenneker.DataTables.Dtos.ServerResponse
 @using Soenneker.DataTables.Dtos.ServerSideRequest
-@using Soenneker.Extensions.Task
 @using Soenneker.Utils.Json
 @using Soenneker.Extensions.CancellationTokens
 
-@inherits Soenneker.Quark.Components.Cancellable.CancellableComponent
+@inherits Soenneker.Quark.Components.Cancellable.CancellableElement
 @implements IDataTable
-@implements IAsyncDisposable
 
 <div style="@(Visible ? "" : "display:none")" >
     <div class="dt-wrapper" style="position:relative;" >
@@ -33,7 +30,6 @@
 </div>
 
 @code {
-
 
     [Inject]
     private IDataTablesInterop DataTablesInterop { get; set; } = null!;
@@ -55,15 +51,9 @@
 
     [Parameter]
     public bool Debug { get; set; }
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object?>? Attributes { get; set; }
-
+    
     [Parameter]
     public DataTableOptions Options { get; set; } = new();
-
-    [Parameter]
-    public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
     /// Custom processing indicator content to display during server-side operations.

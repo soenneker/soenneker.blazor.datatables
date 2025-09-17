@@ -1,8 +1,6 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Blazorise;
-using Blazorise.Bootstrap;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,8 +10,6 @@ using Serilog;
 using Serilog.Debugging;
 using Soenneker.Blazor.DataTables.Demo.Services;
 using Soenneker.Blazor.DataTables.Registrars;
-using Soenneker.Extensions.Task;
-using Soenneker.Extensions.ValueTask;
 using Soenneker.Serilog.Sinks.Browser.Blazor.Registrars;
 
 namespace Soenneker.Blazor.DataTables.Demo;
@@ -38,10 +34,6 @@ public class DataProgram
 
             builder.Services.AddDataTablesInteropAsScoped();
             builder.Services.AddScoped<UserService>();
-
-            builder.Services
-                .AddBlazorise()
-                .AddBootstrapProviders();
 
             WebAssemblyHost host = builder.Build();
 
