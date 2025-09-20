@@ -10,20 +10,20 @@
 @using Soenneker.Utils.Json
 @using Soenneker.Extensions.CancellationTokens
 
-@inherits Soenneker.Quark.Components.Cancellable.CancellableElement
+@inherits Soenneker.Quark.Components.Core.Cancellable.CoreCancellableElement
 @implements IDataTable
 
 <div style="@(Visible ? "" : "display:none")" >
     <div class="dt-wrapper" style="position:relative;" >
         @if (ProcessingIndicator != null)
         {
-            <div id="@(ElementId)-processing"
+            <div id="@(Id)-processing"
                  class="datatable-processing-indicator" style="display:none" >
                 @ProcessingIndicator
             </div>
         }
 
-        <table id="@ElementId" @ref="_elementReference" @attributes="Attributes" >
+        <table id="@Id" @ref="_elementReference" @attributes="Attributes" >
             @ChildContent
         </table>
     </div>
@@ -51,7 +51,7 @@
 
     [Parameter]
     public bool Debug { get; set; }
-    
+
     [Parameter]
     public DataTableOptions Options { get; set; } = new();
 
@@ -63,7 +63,9 @@
     public RenderFragment? ProcessingIndicator { get; set; }
 
     private DotNetObjectReference<DataTable>? _dotNetReference;
-    public readonly string ElementId = $"datatable-{Guid.NewGuid().ToString()}";
+
+    public override string? Id { get; set; } = $"datatable-{Guid.NewGuid().ToString()}";
+
     private ElementReference _elementReference;
 
     private string? _continuationToken;
@@ -107,8 +109,8 @@
 
         using (cts)
         {
-            await DataTablesInterop.Create(_elementReference, ElementId, _dotNetReference, Options, linked);
-            await DataTablesInterop.CreateObserver(_elementReference, ElementId, linked);
+            await DataTablesInterop.Create(_elementReference, Id!, _dotNetReference, Options, linked);
+            await DataTablesInterop.CreateObserver(_elementReference, Id!, linked);
         }
     }
 
@@ -123,7 +125,7 @@
             StateHasChanged();
             await Task.Yield();
 
-            await DataTablesInterop.Refresh(ElementId, linked);
+            await DataTablesInterop.Refresh(Id!, linked);
         }
     }
 
@@ -200,22 +202,22 @@
                 request.ContinuationToken = continuationToken;
 
                 DataTableServerResponse result = await OnServerSideRequest(request);
-                
+
                 // Update the continuation token from the response
                 _continuationToken = result.ContinuationToken;
-                
+
                 // Update the pagination helper with the response data
                 if (result.Data is IEnumerable<object> dataEnumerable)
                 {
                     int recordCount = dataEnumerable.Count();
                     int currentPage = request.Start / request.Length;
                     string? tokenUsedForThisPage = request.ContinuationToken;
-                    
+
                     // Store the continuation token from the response for the next page
                     // Also store the token that was used for the current page for backward navigation
                     _pagingHelper.UpdateFromResponse(request.Length, recordCount, result.ContinuationToken, tokenUsedForThisPage);
                 }
-                
+
                 // Override the response with calculated pagination values
                 var modifiedResult = new DataTableServerResponse
                 {
@@ -226,7 +228,7 @@
                     TotalRecords = _pagingHelper.CalculateTotalRecords(request.Length),
                     TotalFilteredRecords = _pagingHelper.CalculateFilteredRecords()
                 };
-                
+
                 return JsonUtil.Serialize(modifiedResult)!;
             }
 
