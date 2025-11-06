@@ -50,7 +50,7 @@
         <PackageReference Include="Soenneker.Blazor.Utils.ResourceLoader" Version="4.0.1517" />
         <PackageReference Include="Soenneker.DataTables.Dtos.Column" Version="4.0.7" />
         <PackageReference Include="Soenneker.DataTables.Dtos.ServerResponse" Version="4.0.4" />
-        <PackageReference Include="Soenneker.DataTables.Dtos.ServerSideRequest" Version="4.0.6" />
+        <PackageReference Include="Soenneker.DataTables.Dtos.ServerSideRequest" Version="4.0.7" />
         <PackageReference Include="Soenneker.Extensions.CancellationTokens" Version="4.0.4" />
         <PackageReference Include="Soenneker.Quark.Components.Core.Cancellable" Version="4.0.11" />
     </ItemGroup>
