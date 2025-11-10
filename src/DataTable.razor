@@ -77,24 +77,28 @@
     public bool Visible { get; set; } = true;
 
     private bool _elementInitialized;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await DataTablesInterop.Initialize(CancellationToken);
-    }
+    private bool _interopInitialized;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (!firstRender && _elementInitialized)
+            return;
+
+        if (!_interopInitialized)
         {
-            InteropEventListener.Initialize(DataTablesInterop);
+            await DataTablesInterop.Initialize(CancellationToken);
+            _interopInitialized = true;
         }
+
+        if (firstRender)
+            InteropEventListener.Initialize(DataTablesInterop);
 
         if (!_elementInitialized && _elementReference.Id.HasContent())
         {
-            _elementInitialized = true;
-
             await Initialize();
+            _elementInitialized = true;
         }
     }
 
@@ -105,12 +109,20 @@
 
         _dotNetReference = DotNetObjectReference.Create(this);
 
-        CancellationToken linked = CancellationToken.Link(cancellationToken, out CancellationTokenSource? cts);
+        CancellationToken token = cancellationToken;
+        CancellationTokenSource? cts = null;
 
-        using (cts)
+        if (!token.CanBeCanceled)
+            token = CancellationToken.Link(CancellationToken, out cts);
+
+        try
         {
-            await DataTablesInterop.Create(_elementReference, Id!, _dotNetReference, Options, linked);
-            await DataTablesInterop.CreateObserver(_elementReference, Id!, linked);
+            await DataTablesInterop.Create(_elementReference, Id!, _dotNetReference, Options, token);
+            await DataTablesInterop.CreateObserver(_elementReference, Id!, token);
+        }
+        finally
+        {
+            cts?.Dispose();
         }
     }
 
@@ -275,5 +287,4 @@
         _dotNetReference?.Dispose();
         await OnDestroy.InvokeAsync();
     }
-
 }
