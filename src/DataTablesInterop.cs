@@ -4,7 +4,7 @@ using Soenneker.Blazor.DataTables.Abstract;
 using Soenneker.Blazor.DataTables.Options;
 using Soenneker.Blazor.Utils.EventListeningInterop;
 using Soenneker.Blazor.Utils.ResourceLoader.Abstract;
-using Soenneker.Utils.AsyncSingleton;
+using Soenneker.Asyncs.Initializers;
 using Soenneker.Utils.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,8 +15,8 @@ namespace Soenneker.Blazor.DataTables;
 public sealed class DataTablesInterop : EventListeningInterop, IDataTablesInterop
 {
     private readonly IResourceLoader _resourceLoader;
-    private readonly AsyncSingleton _scriptInitializer;
-    private readonly AsyncSingleton _styleInitializer;
+    private readonly AsyncInitializer _scriptInitializer;
+    private readonly AsyncInitializer _styleInitializer;
 
     private const string _modulePath = "Soenneker.Blazor.DataTables/js/datatablesinterop.js";
     private const string _moduleName = "DataTablesInterop";
@@ -25,17 +25,14 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
     {
         _resourceLoader = resourceLoader;
 
-        _scriptInitializer = new AsyncSingleton(async (token, _) =>
+        _scriptInitializer = new AsyncInitializer(async token =>
         {
             await _resourceLoader.ImportModuleAndWaitUntilAvailable(_modulePath, _moduleName, 100, token);
-
-            return new object();
         });
 
-        _styleInitializer = new AsyncSingleton(async (token, _) =>
+        _styleInitializer = new AsyncInitializer(async token =>
         {
             await _resourceLoader.LoadStyle("_content/Soenneker.Blazor.DataTables/css/datatables.css", cancellationToken: token);
-            return new object();
         });
     }
 
