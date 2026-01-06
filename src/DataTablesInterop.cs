@@ -28,14 +28,14 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
         _styleInitializer = new AsyncInitializer(InitializeStyle);
     }
 
-    private async ValueTask InitializeScript(CancellationToken token)
+    private ValueTask InitializeScript(CancellationToken token)
     {
-        await _resourceLoader.ImportModuleAndWaitUntilAvailable(_modulePath, _moduleName, 100, token);
+        return _resourceLoader.ImportModuleAndWaitUntilAvailable(_modulePath, _moduleName, 100, token);
     }
 
-    private async ValueTask InitializeStyle(CancellationToken token)
+    private ValueTask InitializeStyle(CancellationToken token)
     {
-        await _resourceLoader.LoadStyle("_content/Soenneker.Blazor.DataTables/css/datatables.css", cancellationToken: token);
+        return _resourceLoader.LoadStyle("_content/Soenneker.Blazor.DataTables/css/datatables.css", cancellationToken: token);
     }
 
     public async ValueTask Initialize(CancellationToken cancellationToken = default)
