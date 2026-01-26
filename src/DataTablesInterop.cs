@@ -60,7 +60,7 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
         }
     }
 
-    public ValueTask CreateObserver(
+    public async ValueTask CreateObserver(
         ElementReference elementReference,
         string elementId,
         CancellationToken cancellationToken = default)
@@ -68,7 +68,7 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
         var linked = _cancellationScope.CancellationToken.Link(cancellationToken, out var source);
 
         using (source)
-            return JsRuntime.InvokeVoidAsync(
+            await JsRuntime.InvokeVoidAsync(
                 "DataTablesInterop.createObserver",
                 linked,
                 elementReference,
@@ -103,23 +103,23 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
         }
     }
 
-    public ValueTask Destroy(ElementReference elementReference, CancellationToken cancellationToken = default)
+    public async ValueTask Destroy(ElementReference elementReference, CancellationToken cancellationToken = default)
     {
         var linked = _cancellationScope.CancellationToken.Link(cancellationToken, out var source);
 
         using (source)
-            return JsRuntime.InvokeVoidAsync(
+            await JsRuntime.InvokeVoidAsync(
                 "DataTablesInterop.destroy",
                 linked,
                 elementReference);
     }
 
-    public ValueTask Refresh(string elementId, CancellationToken cancellationToken = default)
+    public async ValueTask Refresh(string elementId, CancellationToken cancellationToken = default)
     {
         var linked = _cancellationScope.CancellationToken.Link(cancellationToken, out var source);
 
         using (source)
-            return JsRuntime.InvokeVoidAsync(
+            await JsRuntime.InvokeVoidAsync(
                 "DataTablesInterop.refresh",
                 linked,
                 elementId);
