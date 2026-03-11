@@ -45,7 +45,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Soenneker.Blazor.Extensions.EventCallback" Version="4.0.437" />
+        <PackageReference Include="Soenneker.Blazor.Extensions.EventCallback" Version="4.0.439" />
         <PackageReference Include="Soenneker.Blazor.Utils.InteropEventListener" Version="4.0.3888" />
         <PackageReference Include="Soenneker.Blazor.Utils.ResourceLoader" Version="4.0.1615" />
         <PackageReference Include="Soenneker.DataTables.Dtos.Column" Version="4.0.13" />
