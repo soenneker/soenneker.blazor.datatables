@@ -33,13 +33,9 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
         _styleInitializer = new AsyncInitializer(InitializeStyle);
     }
 
-    private ValueTask InitializeScript(CancellationToken token)
+    private async ValueTask InitializeScript(CancellationToken token)
     {
-        return _resourceLoader.ImportModuleAndWaitUntilAvailable(
-            _modulePath,
-            _moduleName,
-            100,
-            token);
+        _ = await _resourceLoader.ImportModule(_modulePath, token);
     }
 
     private ValueTask InitializeStyle(CancellationToken token)
