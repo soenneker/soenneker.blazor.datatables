@@ -21,12 +21,10 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
     private readonly AsyncInitializer _styleInitializer;
 
     private const string _modulePath = "Soenneker.Blazor.DataTables/js/datatablesinterop.js";
-    private const string _moduleName = "DataTablesInterop";
 
     private readonly CancellationScope _cancellationScope = new();
 
-    public DataTablesInterop(IJSRuntime jSRuntime, IResourceLoader resourceLoader)
-        : base(jSRuntime)
+    public DataTablesInterop(IJSRuntime jSRuntime, IResourceLoader resourceLoader) : base(jSRuntime)
     {
         _resourceLoader = resourceLoader;
         _scriptInitializer = new AsyncInitializer(InitializeScript);
@@ -40,9 +38,7 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
 
     private ValueTask InitializeStyle(CancellationToken token)
     {
-        return _resourceLoader.LoadStyle(
-            "_content/Soenneker.Blazor.DataTables/css/datatables.css",
-            cancellationToken: token);
+        return _resourceLoader.LoadStyle("_content/Soenneker.Blazor.DataTables/css/datatables.css", cancellationToken: token);
     }
 
     public async ValueTask Initialize(CancellationToken cancellationToken = default)
@@ -56,27 +52,16 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
         }
     }
 
-    public async ValueTask CreateObserver(
-        ElementReference elementReference,
-        string elementId,
-        CancellationToken cancellationToken = default)
+    public async ValueTask CreateObserver(ElementReference elementReference, string elementId, CancellationToken cancellationToken = default)
     {
         var linked = _cancellationScope.CancellationToken.Link(cancellationToken, out var source);
 
         using (source)
-            await JsRuntime.InvokeVoidAsync(
-                "DataTablesInterop.createObserver",
-                linked,
-                elementReference,
-                elementId);
+            await JsRuntime.InvokeVoidAsync("DataTablesInterop.createObserver", linked, elementReference, elementId);
     }
 
-    public async ValueTask Create(
-        ElementReference elementReference,
-        string elementId,
-        DotNetObjectReference<DataTable> dotNetObjectRef,
-        DataTableOptions? configuration = null,
-        CancellationToken cancellationToken = default)
+    public async ValueTask Create(ElementReference elementReference, string elementId, DotNetObjectReference<DataTable> dotNetObjectRef,
+        DataTableOptions? configuration = null, CancellationToken cancellationToken = default)
     {
         var linked = _cancellationScope.CancellationToken.Link(cancellationToken, out var source);
 
@@ -89,13 +74,7 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
             if (configuration != null)
                 json = JsonUtil.Serialize(configuration);
 
-            await JsRuntime.InvokeVoidAsync(
-                "DataTablesInterop.create",
-                linked,
-                elementReference,
-                elementId,
-                json,
-                dotNetObjectRef);
+            await JsRuntime.InvokeVoidAsync("DataTablesInterop.create", linked, elementReference, elementId, json, dotNetObjectRef);
         }
     }
 
@@ -104,10 +83,7 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
         var linked = _cancellationScope.CancellationToken.Link(cancellationToken, out var source);
 
         using (source)
-            await JsRuntime.InvokeVoidAsync(
-                "DataTablesInterop.destroy",
-                linked,
-                elementReference);
+            await JsRuntime.InvokeVoidAsync("DataTablesInterop.destroy", linked, elementReference);
     }
 
     public async ValueTask Refresh(string elementId, CancellationToken cancellationToken = default)
@@ -115,10 +91,7 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
         var linked = _cancellationScope.CancellationToken.Link(cancellationToken, out var source);
 
         using (source)
-            await JsRuntime.InvokeVoidAsync(
-                "DataTablesInterop.refresh",
-                linked,
-                elementId);
+            await JsRuntime.InvokeVoidAsync("DataTablesInterop.refresh", linked, elementId);
     }
 
     public async ValueTask DisposeAsync()
