@@ -1,3 +1,4 @@
+using Soenneker.Quark;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -34,6 +35,7 @@ public class DataProgram
 
             builder.Services.AddDataTablesInteropAsScoped();
             builder.Services.AddScoped<UserService>();
+            builder.Services.AddQuarkSuiteAsScoped();
 
             WebAssemblyHost host = builder.Build();
 
@@ -75,3 +77,5 @@ public class DataProgram
         Log.Logger = loggerConfig.CreateLogger();
     }
 }
+
+
