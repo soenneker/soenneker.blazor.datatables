@@ -11,6 +11,7 @@ using Serilog;
 using Serilog.Debugging;
 using Soenneker.Blazor.DataTables.Demo.Services;
 using Soenneker.Blazor.DataTables.Registrars;
+using Soenneker.Quark.Gen.Lucide.Generated;
 using Soenneker.Serilog.Sinks.Browser.Blazor.Registrars;
 
 namespace Soenneker.Blazor.DataTables.Demo;
@@ -36,6 +37,7 @@ public class DataProgram
             builder.Services.AddDataTablesInteropAsScoped();
             builder.Services.AddScoped<UserService>();
             builder.Services.AddQuarkSuiteAsScoped();
+            builder.Services.AddLucideIconsAsScoped();
 
             WebAssemblyHost host = builder.Build();
 

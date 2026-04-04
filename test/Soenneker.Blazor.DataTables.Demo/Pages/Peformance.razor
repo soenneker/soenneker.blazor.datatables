@@ -5,56 +5,58 @@
 
 @inject ILogger<Index> Logger
 
-<img src="https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png" />
-<h1>Soenneker.Blazor.DataTables demo</h1>
-<p>This page demonstrates some of the uses of the DataTables component.</p>
+<Div Space="Space.Y.Is6">
+    <Div Space="Space.Y.Is2">
+        <H1 TextSize="TextSize.TwoXl" FontWeight="FontWeight.Semibold" Margin="Margin.Is0">DataTables performance</H1>
+        <Paragraph Margin="Margin.Is0" TextColor="TextColor.MutedForeground" TextSize="TextSize.Sm">
+            Large client-side dataset (500 rows) for scroll and render stress.
+        </Paragraph>
+    </Div>
 
-<DataTable Options="_options">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Office</th>
-                <th>Age</th>
-                <th>Start date</th>
-                <th>Salary</th>
-                <th>Link</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (Employee employee in _employees)
-            {
+    <DemoPanel Title="Heavy table" Description="Same row shape as the home demo with more rows.">
+        <DataTable Options="_options">
+            <thead>
                 <tr>
-                    <td>@employee.Name</td>
-                    <td>@employee.Position</td>
-                    <td>@employee.City</td>
-                    <td>@employee.Age</td>
-                    <td>@employee.StartDate</td>
-                    <td>@employee.Salary</td>
-                    <td>
-                        <Anchor To=@("/")>Link</Anchor>
-                    </td>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Office</th>
+                    <th>Age</th>
+                    <th>Start date</th>
+                    <th>Salary</th>
+                    <th>Link</th>
                 </tr>
-            }
-        </tbody>
-</DataTable>
+            </thead>
+            <tbody>
+                @foreach (Employee employee in _employees)
+                {
+                    <tr>
+                        <td>@employee.Name</td>
+                        <td>@employee.Position</td>
+                        <td>@employee.City</td>
+                        <td>@employee.Age</td>
+                        <td>@employee.StartDate</td>
+                        <td>@employee.Salary</td>
+                        <td>
+                            <Anchor To="/">Home</Anchor>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </DataTable>
+    </DemoPanel>
 
-<br />
-
-<NavLink href="/" >Go to first page</NavLink>
-<hr />
+    <DemoPanel Title="Navigation" Description="Return to the main demo.">
+        <DemoButtonRow>
+            <Button To="/" Variant="ButtonVariant.Outline">Back to home</Button>
+        </DemoButtonRow>
+    </DemoPanel>
+</Div>
 
 @code
 {
-
     DataTableOptions _options;
 
     readonly List<Employee> _employees = [];
-
-    private DataTable _dataTable = null!;
-
-    private bool _render = true;
-    private bool _renderData = true;
 
     protected override void OnInitialized()
     {
@@ -74,32 +76,4 @@
             OrderMulti = true
         };
     }
-
-    protected override async Task OnInitializedAsync()
-    {
-    }
-
-    private async Task OpenModal()
-    {
-    }
-
-    private void OnDataTableInitialized()
-    {
-        Logger.LogInformation("OnInitialized called");
-    }
-
-    private void ClearViaData()
-    {
-    }
-
-    private void Render()
-    {
-        _render = !_render;
-    }
-
-    private void RenderData()
-    {
-        _renderData = !_renderData;
-    }
-
 }

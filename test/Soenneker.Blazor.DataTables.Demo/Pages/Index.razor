@@ -6,57 +6,66 @@
 
 @inject ILogger<Index> Logger
 
-<img src="https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png" />
-<h1>Soenneker.Blazor.DataTables demo</h1>
-<p>This page demonstrates some of the uses of the DataTables component.</p>
+<Div Space="Space.Y.Is6">
+    <Div Space="Space.Y.Is2">
+        <H1 TextSize="TextSize.TwoXl" FontWeight="FontWeight.Semibold" Margin="Margin.Is0">DataTables demo</H1>
+        <Paragraph Margin="Margin.Is0" TextColor="TextColor.MutedForeground" TextSize="TextSize.Sm">
+            Client-side table with generated rows, DOM refresh helpers, and links to other samples.
+        </Paragraph>
+    </Div>
 
-<Container>
-    <DataTable @ref="_dataTable" Options="_options" class="table table-sm dt-responsive table-striped" style="width: 100%" OnInitialize="OnDataTableInitialized" >
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Office</th>
-                <th>Age</th>
-                <th>Start date</th>
-                <th>Salary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (_renderData)
-            {
-                @foreach (Employee person in _people)
+    <DemoPanel Title="Sample table" Description="Ten bogus employees; toggle rendering or clear the bound list.">
+        <DataTable @ref="_dataTable" Options="_options" class="table table-sm dt-responsive table-striped" style="width: 100%" OnInitialize="OnDataTableInitialized">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Office</th>
+                    <th>Age</th>
+                    <th>Start date</th>
+                    <th>Salary</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (_renderData)
                 {
-                    <tr>
-                        <td>@person.Name</td>
-                        <td>@person.Position</td>
-                        <td>@person.City</td>
-                        <td>@person.Age</td>
-                        <td>@person.StartDate.ToString("yyyy/MM/dd")</td>
-                        <td>$@person.Salary</td>
-                    </tr>
+                    @foreach (Employee person in _people)
+                    {
+                        <tr>
+                            <td>@person.Name</td>
+                            <td>@person.Position</td>
+                            <td>@person.City</td>
+                            <td>@person.Age</td>
+                            <td>@person.StartDate.ToString("yyyy/MM/dd")</td>
+                            <td>$@person.Salary</td>
+                        </tr>
+                    }
                 }
-            }
-        </tbody>
-    </DataTable>
-    <br />
+            </tbody>
+        </DataTable>
+    </DemoPanel>
 
-    <button @onclick="Render" >Toggle Table</button>
-    <button @onclick="ClearViaData" >ClearViaData</button>
-    <button @onclick="Recreate" >Recreate</button>
-    <button @onclick="Refresh" >Refresh</button>
-    <NavLink href="/performance" >Go to performance</NavLink>
-    <NavLink href="/server-side-demo" >Server-Side Demo</NavLink>
-    <NavLink href="/custom-loading-demo" >Custom Loading Demo</NavLink>
-    <NavLink href="/continuation-token-demo" >Continuation Token Demo</NavLink>
-</Container>
+    <DemoPanel Title="Actions" Description="Interop helpers and navigation.">
+        <DemoButtonRow>
+            <Button OnClick="ToggleRowData">Toggle row data</Button>
+            <Button OnClick="ClearViaData" Variant="ButtonVariant.Secondary">Clear via data</Button>
+            <Button OnClick="Recreate" Variant="ButtonVariant.Secondary">Recreate</Button>
+            <Button OnClick="Refresh" Variant="ButtonVariant.Outline">Refresh</Button>
+        </DemoButtonRow>
+        <DemoButtonRow>
+            <Button To="/performance" Variant="ButtonVariant.Outline">Performance</Button>
+            <Button To="/server-side-demo" Variant="ButtonVariant.Outline">Server-side demo</Button>
+            <Button To="/custom-loading-demo" Variant="ButtonVariant.Outline">Custom loading</Button>
+            <Button To="/continuation-token-demo" Variant="ButtonVariant.Outline">Continuation token</Button>
+        </DemoButtonRow>
+    </DemoPanel>
+</Div>
 
 @code {
     private DataTableOptions _options = null!;
 
     private DataTable? _dataTable;
 
-    private bool _render = true;
     private bool _renderData = true;
 
     private List<Employee> _people;
@@ -85,12 +94,12 @@
 
     private async Task Refresh()
     {
-        await _dataTable.RefreshWithDomUpdate(() => { _people = GeneratePeople(); });
+        await _dataTable!.RefreshWithDomUpdate(() => { _people = GeneratePeople(); });
     }
 
     private async Task Recreate()
     {
-        await _dataTable.RecreateWithDomUpdate(() => { _people = GeneratePeople(); });
+        await _dataTable!.RecreateWithDomUpdate(() => { _people = GeneratePeople(); });
     }
 
     private void ClearViaData()
@@ -98,16 +107,9 @@
         _people.Clear();
     }
 
-    private void Render()
+    private void ToggleRowData()
     {
-        _render = !_render;
-    }
-
-    private void RebuildData()
-    {
-        _people.Clear();
-
-        _people = GeneratePeople();
+        _renderData = !_renderData;
     }
 
     private List<Employee> GeneratePeople()
@@ -130,5 +132,4 @@
 
         return people;
     }
-
 }

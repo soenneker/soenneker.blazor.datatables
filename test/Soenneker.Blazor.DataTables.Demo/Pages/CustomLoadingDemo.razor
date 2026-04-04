@@ -10,140 +10,114 @@
 @inject UserService UserService
 @inject ILogger<CustomLoadingDemo> Logger
 
-<PageTitle>Custom Processing Indicator Demo</PageTitle>
+<PageTitle>Custom processing indicator demo</PageTitle>
 
-<div class="container mt-4" >
-    <h1>Custom Processing Indicator Demo</h1>
-    <p class="lead" >This demo shows how to override the default DataTables processing text during server-side processing.</p>
+<Div Space="Space.Y.Is6">
+    <Div Space="Space.Y.Is2">
+        <H1 TextSize="TextSize.TwoXl" FontWeight="FontWeight.Semibold" Margin="Margin.Is0">Custom processing indicator</H1>
+        <Paragraph Margin="Margin.Is0" TextColor="TextColor.MutedForeground" TextSize="TextSize.Sm">
+            Compare default, custom, disabled, and rich HTML overlays while server-side data loads.
+        </Paragraph>
+    </Div>
 
-    <div class="row" >
-        <div class="col-md-6" >
-            <div class="card" >
-                <div class="card-header" >
-                    <h5>Default Processing Indicator</h5>
-                </div>
-                <div class="card-body" >
-                    <DataTable @ref="_defaultDataTable"
-                               OnServerSideRequest="HandleServerSideRequest"
-                               Options="_defaultTableOptions"
-                               class="table table-sm dt-responsive table-striped"
-                               style="width: 100%" >
-                        <thead>
-                            <tr>
-                                <th data-data="id" >ID</th>
-                                <th data-data="name" >Name</th>
-                                <th data-data="email" >Email</th>
-                                <th data-data="role" >Role</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </DataTable>
-                </div>
-            </div>
-        </div>
+    <Grid Columns="Columns.Is1.OnMd.Is2" Gap="Gap.Is4">
+        <DemoPanel Title="Default processing" Description="Built-in DataTables processing text.">
+            <DataTable @ref="_defaultDataTable"
+                       OnServerSideRequest="HandleServerSideRequest"
+                       Options="_defaultTableOptions"
+                       class="table table-sm dt-responsive table-striped"
+                       style="width: 100%">
+                <thead>
+                    <tr>
+                        <th data-data="id">ID</th>
+                        <th data-data="name">Name</th>
+                        <th data-data="email">Email</th>
+                        <th data-data="role">Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </DataTable>
+        </DemoPanel>
 
-        <div class="col-md-6" >
-            <div class="card" >
-                <div class="card-header" >
-                    <h5>Custom Processing Indicator</h5>
-                </div>
-                <div class="card-body" >
-                    <DataTable @ref="_customDataTable"
-                               OnServerSideRequest="HandleServerSideRequest"
-                               Options="_customTableOptions"
-                               class="table table-sm dt-responsive table-striped"
-                               style="width: 100%" >
-                        <ProcessingIndicator>
-                            <div class="text-center" >
-                                <div class="spinner-border text-primary" role="status" ></div>
-                                <div class="mt-2" >Loading data from server...</div>
-                            </div>
-                        </ProcessingIndicator>
-                        <ChildContent>
-                            <thead>
-                                <tr>
-                                    <th data-data="id" >ID</th>
-                                    <th data-data="name" >Name</th>
-                                    <th data-data="email" >Email</th>
-                                    <th data-data="role" >Role</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </ChildContent>
-                    </DataTable>
-                </div>
-            </div>
-        </div>
-    </div>
+        <DemoPanel Title="Custom processing" Description="Spinner and message in ProcessingIndicator.">
+            <DataTable @ref="_customDataTable"
+                       OnServerSideRequest="HandleServerSideRequest"
+                       Options="_customTableOptions"
+                       class="table table-sm dt-responsive table-striped"
+                       style="width: 100%">
+                <ProcessingIndicator>
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <div class="mt-2">Loading data from server...</div>
+                    </div>
+                </ProcessingIndicator>
+                <ChildContent>
+                    <thead>
+                        <tr>
+                            <th data-data="id">ID</th>
+                            <th data-data="name">Name</th>
+                            <th data-data="email">Email</th>
+                            <th data-data="role">Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </ChildContent>
+            </DataTable>
+        </DemoPanel>
 
-    <div class="row mt-4" >
-        <div class="col-md-6" >
-            <div class="card" >
-                <div class="card-header" >
-                    <h5>Disabled Processing Indicator</h5>
-                </div>
-                <div class="card-body" >
-                    <DataTable @ref="_disabledDataTable"
-                               OnServerSideRequest="HandleServerSideRequest"
-                               Options="_disabledTableOptions"
-                               class="table table-sm dt-responsive table-striped"
-                               style="width: 100%" >
-                               <ProcessingIndicator></ProcessingIndicator>
-                        <ChildContent>
-                            <thead>
-                                <tr>
-                                    <th data-data="id" >ID</th>
-                                    <th data-data="name" >Name</th>
-                                    <th data-data="email" >Email</th>
-                                    <th data-data="role" >Role</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </ChildContent>
-                    </DataTable>
-                </div>
-            </div>
-        </div>
+        <DemoPanel Title="Processing disabled" Description="Processing option off; empty indicator slot.">
+            <DataTable @ref="_disabledDataTable"
+                       OnServerSideRequest="HandleServerSideRequest"
+                       Options="_disabledTableOptions"
+                       class="table table-sm dt-responsive table-striped"
+                       style="width: 100%">
+                <ProcessingIndicator></ProcessingIndicator>
+                <ChildContent>
+                    <thead>
+                        <tr>
+                            <th data-data="id">ID</th>
+                            <th data-data="name">Name</th>
+                            <th data-data="email">Email</th>
+                            <th data-data="role">Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </ChildContent>
+            </DataTable>
+        </DemoPanel>
 
-        <div class="col-md-6" >
-            <div class="card" >
-                <div class="card-header" >
-                    <h5>HTML Processing Indicator</h5>
-                </div>
-                <div class="card-body" >
-                    <DataTable @ref="_htmlDataTable"
-                               OnServerSideRequest="HandleServerSideRequest"
-                               Options="_htmlTableOptions"
-                               class="table table-sm dt-responsive table-striped"
-                               style="width: 100%" >
-                        <ProcessingIndicator>
-                            <div class="text-center" >
-                                <div class="spinner-border text-primary" role="status" ></div>
-                                <div class="mt-2" >Loading data...</div>
-                                <div class="small text-muted" >Please wait while we fetch your data</div>
-                            </div>
-                        </ProcessingIndicator>
-                        <ChildContent>
-                            <thead>
-                                <tr>
-                                    <th data-data="id" >ID</th>
-                                    <th data-data="name" >Name</th>
-                                    <th data-data="email" >Email</th>
-                                    <th data-data="role" >Role</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </ChildContent>
-                    </DataTable>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+        <DemoPanel Title="HTML processing block" Description="Spinner plus secondary line of copy.">
+            <DataTable @ref="_htmlDataTable"
+                       OnServerSideRequest="HandleServerSideRequest"
+                       Options="_htmlTableOptions"
+                       class="table table-sm dt-responsive table-striped"
+                       style="width: 100%">
+                <ProcessingIndicator>
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <div class="mt-2">Loading data...</div>
+                        <div class="small text-muted">Please wait while we fetch your data</div>
+                    </div>
+                </ProcessingIndicator>
+                <ChildContent>
+                    <thead>
+                        <tr>
+                            <th data-data="id">ID</th>
+                            <th data-data="name">Name</th>
+                            <th data-data="email">Email</th>
+                            <th data-data="role">Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </ChildContent>
+            </DataTable>
+        </DemoPanel>
+    </Grid>
+</Div>
 
 @code {
     private DataTable _defaultDataTable = null!;
@@ -184,10 +158,8 @@
         {
             _drawCounter++;
 
-            // Simulate some processing time
             await Task.Delay(1000);
 
-            // Convert orderColumn to column name
             string? orderBy = null;
             if (request.Order?.Count > 0)
             {
@@ -201,7 +173,6 @@
                 };
             }
 
-            // Calculate page number from start and length
             int pageNumber = (request.Start / request.Length) + 1;
             int pageSize = request.Length;
             string? searchTerm = request.Search?.Value;
@@ -217,5 +188,4 @@
             return DataTableServerResponse.Fail(_drawCounter, "An error occurred while processing your request. Please try again later.");
         }
     }
-
 }
