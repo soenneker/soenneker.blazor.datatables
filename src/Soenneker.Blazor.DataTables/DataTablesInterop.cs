@@ -3,47 +3,58 @@ using Microsoft.JSInterop;
 using Soenneker.Asyncs.Initializers;
 using Soenneker.Blazor.DataTables.Abstract;
 using Soenneker.Blazor.DataTables.Options;
-using Soenneker.Blazor.Utils.EventListeningInterop;
+using Soenneker.Blazor.Utils.ModuleImport.Abstract;
 using Soenneker.Blazor.Utils.ResourceLoader.Abstract;
 using Soenneker.Extensions.CancellationTokens;
 using Soenneker.Utils.CancellationScopes;
 using Soenneker.Utils.Json;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Soenneker.Blazor.DataTables;
 
 /// <inheritdoc cref="IDataTablesInterop"/>
-public sealed class DataTablesInterop : EventListeningInterop, IDataTablesInterop
+public sealed class DataTablesInterop : IDataTablesInterop
 {
+    private const string _modulePath = "/_content/Soenneker.Blazor.DataTables/js/datatablesinterop.js";
+
     private readonly IResourceLoader _resourceLoader;
+    private readonly IModuleImportUtil _moduleImportUtil;
     private readonly AsyncInitializer _scriptInitializer;
     private readonly AsyncInitializer _styleInitializer;
 
-    private const string _modulePath = "Soenneker.Blazor.DataTables/js/datatablesinterop.js";
-
     private readonly CancellationScope _cancellationScope = new();
 
-    public DataTablesInterop(IJSRuntime jSRuntime, IResourceLoader resourceLoader) : base(jSRuntime)
+    public DataTablesInterop(IResourceLoader resourceLoader, IModuleImportUtil moduleImportUtil)
     {
         _resourceLoader = resourceLoader;
+        _moduleImportUtil = moduleImportUtil;
         _scriptInitializer = new AsyncInitializer(InitializeScript);
         _styleInitializer = new AsyncInitializer(InitializeStyle);
     }
 
-    private async ValueTask InitializeScript(CancellationToken token)
+    private static string NormalizeContentUri(string uri)
     {
-        _ = await _resourceLoader.ImportModule(_modulePath, token);
+        if (string.IsNullOrEmpty(uri) || uri.Contains("://", StringComparison.Ordinal))
+            return uri;
+
+        return uri[0] == '/' ? uri : "/" + uri;
     }
 
-    private ValueTask InitializeStyle(CancellationToken token)
+    private async ValueTask InitializeScript(CancellationToken token)
     {
-        return _resourceLoader.LoadStyle("_content/Soenneker.Blazor.DataTables/css/datatables.css", cancellationToken: token);
+        _ = await _moduleImportUtil.GetContentModuleReference(_modulePath, token);
+    }
+
+    private async ValueTask InitializeStyle(CancellationToken token)
+    {
+        await _resourceLoader.LoadStyle(NormalizeContentUri("_content/Soenneker.Blazor.DataTables/css/datatables.css"), cancellationToken: token);
     }
 
     public async ValueTask Initialize(CancellationToken cancellationToken = default)
     {
-        var linked = _cancellationScope.CancellationToken.Link(cancellationToken, out var source);
+        CancellationToken linked = _cancellationScope.CancellationToken.Link(cancellationToken, out CancellationTokenSource? source);
 
         using (source)
         {
@@ -54,16 +65,19 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
 
     public async ValueTask CreateObserver(ElementReference elementReference, string elementId, CancellationToken cancellationToken = default)
     {
-        var linked = _cancellationScope.CancellationToken.Link(cancellationToken, out var source);
+        CancellationToken linked = _cancellationScope.CancellationToken.Link(cancellationToken, out CancellationTokenSource? source);
 
         using (source)
-            await JsRuntime.InvokeVoidAsync("DataTablesInterop.createObserver", linked, elementReference, elementId);
+        {
+            IJSObjectReference module = await _moduleImportUtil.GetContentModuleReference(_modulePath, linked);
+            await module.InvokeVoidAsync("createObserver", linked, elementReference, elementId);
+        }
     }
 
     public async ValueTask Create(ElementReference elementReference, string elementId, DotNetObjectReference<DataTable> dotNetObjectRef,
         DataTableOptions? configuration = null, CancellationToken cancellationToken = default)
     {
-        var linked = _cancellationScope.CancellationToken.Link(cancellationToken, out var source);
+        CancellationToken linked = _cancellationScope.CancellationToken.Link(cancellationToken, out CancellationTokenSource? source);
 
         using (source)
         {
@@ -74,29 +88,49 @@ public sealed class DataTablesInterop : EventListeningInterop, IDataTablesIntero
             if (configuration != null)
                 json = JsonUtil.Serialize(configuration);
 
-            await JsRuntime.InvokeVoidAsync("DataTablesInterop.create", linked, elementReference, elementId, json, dotNetObjectRef);
+            IJSObjectReference module = await _moduleImportUtil.GetContentModuleReference(_modulePath, linked);
+            await module.InvokeVoidAsync("create", linked, elementReference, elementId, json, dotNetObjectRef);
         }
     }
 
     public async ValueTask Destroy(ElementReference elementReference, CancellationToken cancellationToken = default)
     {
-        var linked = _cancellationScope.CancellationToken.Link(cancellationToken, out var source);
+        CancellationToken linked = _cancellationScope.CancellationToken.Link(cancellationToken, out CancellationTokenSource? source);
 
         using (source)
-            await JsRuntime.InvokeVoidAsync("DataTablesInterop.destroy", linked, elementReference);
+        {
+            IJSObjectReference module = await _moduleImportUtil.GetContentModuleReference(_modulePath, linked);
+            await module.InvokeVoidAsync("destroy", linked, elementReference);
+        }
     }
 
     public async ValueTask Refresh(string elementId, CancellationToken cancellationToken = default)
     {
-        var linked = _cancellationScope.CancellationToken.Link(cancellationToken, out var source);
+        CancellationToken linked = _cancellationScope.CancellationToken.Link(cancellationToken, out CancellationTokenSource? source);
 
         using (source)
-            await JsRuntime.InvokeVoidAsync("DataTablesInterop.refresh", linked, elementId);
+        {
+            IJSObjectReference module = await _moduleImportUtil.GetContentModuleReference(_modulePath, linked);
+            await module.InvokeVoidAsync("refresh", linked, elementId);
+        }
+    }
+
+    public async ValueTask AddEventListener(string functionName, string elementId, string eventName, object dotNetCallback,
+        CancellationToken cancellationToken = default)
+    {
+        CancellationToken linked = _cancellationScope.CancellationToken.Link(cancellationToken, out CancellationTokenSource? source);
+
+        using (source)
+        {
+            IJSObjectReference module = await _moduleImportUtil.GetContentModuleReference(_modulePath, linked);
+            string identifier = functionName.Replace("DataTablesInterop.", "", StringComparison.Ordinal);
+            await module.InvokeVoidAsync(identifier, linked, elementId, eventName, dotNetCallback);
+        }
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _resourceLoader.DisposeModule(_modulePath);
+        await _moduleImportUtil.DisposeContentModule(_modulePath);
 
         await _scriptInitializer.DisposeAsync();
         await _styleInitializer.DisposeAsync();
