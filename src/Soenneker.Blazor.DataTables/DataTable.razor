@@ -9,6 +9,7 @@
 @using Soenneker.DataTables.Dtos.ServerSideRequest
 @using Soenneker.Utils.Json
 @using Soenneker.Extensions.CancellationTokens
+@using Soenneker.Blazor.Utils.Ids
 
 @inherits Soenneker.Quark.CoreCancellableElement
 @implements IDataTable
@@ -64,7 +65,7 @@
 
     private DotNetObjectReference<DataTable>? _dotNetReference;
 
-    public override string? Id { get; set; } = $"datatable-{Guid.NewGuid().ToString()}";
+    public override string? Id { get; set; } = BlazorIdGenerator.New("datatable");
 
     private ElementReference _elementReference;
 
