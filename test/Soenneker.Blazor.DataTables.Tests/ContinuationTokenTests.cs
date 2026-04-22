@@ -2,7 +2,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Soenneker.Blazor.DataTables.Options;
 using Soenneker.DataTables.Dtos.ServerSideRequest;
-using Xunit;
 using System.Collections.Generic;
 using System;
 using Soenneker.DataTables.Dtos.ServerResponse;
@@ -13,7 +12,7 @@ public sealed class ContinuationTokenTests
 {
     private readonly Mock<ILogger<DataTable>> _mockLogger = new();
 
-    [Fact]
+    [Test]
     public void DataTableServerResponse_ShouldSupportContinuationToken()
     {
         // Arrange
@@ -31,7 +30,7 @@ public sealed class ContinuationTokenTests
         Assert.Equal(data, response.Data);
     }
 
-    [Fact]
+    [Test]
     public void DataTableServerResponse_ShouldHandleNullContinuationToken()
     {
         // Arrange
@@ -48,7 +47,7 @@ public sealed class ContinuationTokenTests
         Assert.Equal(data, response.Data);
     }
 
-    [Fact]
+    [Test]
     public void DataTableServerSideRequest_ShouldSupportContinuationToken()
     {
         // Arrange
@@ -74,7 +73,7 @@ public sealed class ContinuationTokenTests
         Assert.NotNull(request.Order);
     }
 
-    [Fact]
+    [Test]
     public void DataTableServerSideRequest_ShouldHandleNullContinuationToken()
     {
         // Arrange
@@ -93,7 +92,7 @@ public sealed class ContinuationTokenTests
         Assert.Equal(10, request.Length);
     }
 
-    [Fact]
+    [Test]
     public void DataTableContinuationTokenPaging_ShouldCalculateVirtualStart()
     {
         // Arrange
@@ -107,7 +106,7 @@ public sealed class ContinuationTokenTests
         Assert.Equal(0, virtualStart);
     }
 
-    [Fact]
+    [Test]
     public void DataTableContinuationTokenPaging_ShouldUpdateFromResponse()
     {
         // Arrange
@@ -123,7 +122,7 @@ public sealed class ContinuationTokenTests
         Assert.True(paging.HasMorePages);
     }
 
-    [Fact]
+    [Test]
     public void DataTableContinuationTokenPaging_ShouldHandleLastPage()
     {
         // Arrange
@@ -138,7 +137,7 @@ public sealed class ContinuationTokenTests
         Assert.False(paging.HasMorePages);
     }
 
-    [Fact]
+    [Test]
     public void DataTableContinuationTokenPaging_ShouldReset()
     {
         // Arrange
@@ -157,7 +156,7 @@ public sealed class ContinuationTokenTests
         Assert.True(paging.HasMorePages);
     }
 
-    [Fact]
+    [Test]
     public void DataTableContinuationTokenPaging_ShouldSupportBackwardNavigation()
     {
         // Arrange
@@ -175,7 +174,7 @@ public sealed class ContinuationTokenTests
         Assert.Equal("token_page_1", tokenForPage1);
     }
 
-    [Fact]
+    [Test]
     public void DataTableContinuationTokenPaging_ShouldHandleBackwardNavigationWithClosestToken()
     {
         // Arrange
@@ -192,7 +191,7 @@ public sealed class ContinuationTokenTests
         Assert.Equal("token_page_0", tokenForPage1);
     }
 
-    [Fact]
+    [Test]
     public void DataTableContinuationTokenPaging_ShouldHandleForwardNavigationWithStoredTokens()
     {
         // Arrange
@@ -210,7 +209,7 @@ public sealed class ContinuationTokenTests
         Assert.Equal("token_page_2", tokenForPage2);
     }
 
-    [Fact]
+    [Test]
     public void DataTableContinuationTokenPaging_ShouldValidateInputs()
     {
         // Arrange
@@ -236,7 +235,7 @@ public sealed class ContinuationTokenTests
         Assert.Throws<ArgumentException>(() => paging.SetPageRecordCount(0, -1));
     }
 
-    [Fact]
+    [Test]
     public void DataTableContinuationTokenPaging_ShouldHandleEdgeCases()
     {
         // Arrange

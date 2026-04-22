@@ -1,20 +1,19 @@
 using Soenneker.Blazor.DataTables.Abstract;
-using Soenneker.Tests.FixturedUnit;
-using Xunit;
+using Soenneker.Tests.HostedUnit;
 
 namespace Soenneker.Blazor.DataTables.Tests;
 
-[Collection("Collection")]
-public class DataTablesInteropTests : FixturedUnitTest
+[ClassDataSource<Host>(Shared = SharedType.PerTestSession)]
+public class DataTablesInteropTests : HostedUnitTest
 {
     private readonly IDataTablesInterop _util;
 
-    public DataTablesInteropTests(Fixture fixture, ITestOutputHelper output) : base(fixture, output)
+    public DataTablesInteropTests(Host host) : base(host)
     {
         _util = Resolve<IDataTablesInterop>(true);
     }
 
-    [Fact]
+    [Test]
     public void Default()
     {
 

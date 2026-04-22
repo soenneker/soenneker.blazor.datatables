@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using Soenneker.Blazor.DataTables.Options;
-using Xunit;
 
 namespace Soenneker.Blazor.DataTables.Tests;
 
@@ -9,7 +8,7 @@ public sealed class ContinuationTokenNavigationTests
 {
     private readonly Mock<ILogger<DataTable>> _mockLogger = new();
 
-    [Fact]
+    [Test]
     public void ShouldSupportFullNavigationFlow()
     {
         // Arrange
@@ -48,7 +47,7 @@ public sealed class ContinuationTokenNavigationTests
         Assert.Equal("token_page_3", tokenForPage3);
     }
 
-    [Fact]
+    [Test]
     public void ShouldReturnSameTokenWhenNavigatingBackToPage()
     {
         // Arrange
@@ -85,7 +84,7 @@ public sealed class ContinuationTokenNavigationTests
         Assert.Equal(tokenForPage2Second, tokenForPage2Third);
     }
 
-    [Fact]
+    [Test]
     public void ShouldHandleNavigationWithMissingTokens()
     {
         // Arrange
@@ -108,9 +107,7 @@ public sealed class ContinuationTokenNavigationTests
         Assert.Equal("token_page_4", tokenForPage5); // Should use page 4 token
     }
 
-
-
-    [Fact]
+    [Test]
     public void ShouldHandleResetCorrectly()
     {
         // Arrange
@@ -133,7 +130,7 @@ public sealed class ContinuationTokenNavigationTests
         Assert.True(paging.HasMorePages);
     }
 
-    [Fact]
+    [Test]
     public void ShouldCalculateVirtualStartCorrectly()
     {
         // Arrange
@@ -151,7 +148,7 @@ public sealed class ContinuationTokenNavigationTests
         Assert.Equal(50, paging.CalculateVirtualStart(pageSize));
     }
 
-    [Fact]
+    [Test]
     public void ShouldEstimateTotalRecordsCorrectly()
     {
         // Arrange
