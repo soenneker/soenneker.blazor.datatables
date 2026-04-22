@@ -27,10 +27,5 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\Soenneker.Blazor.DataTables\Soenneker.Blazor.DataTables.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-        <Content Include="testconfig.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
 </Project>
+
