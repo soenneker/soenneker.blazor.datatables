@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Moq;
+using AwesomeAssertions;
 using Soenneker.Blazor.DataTables.Options;
 using Soenneker.DataTables.Dtos.ServerSideRequest;
 using System.Collections.Generic;
@@ -23,11 +24,11 @@ public sealed class ContinuationTokenTests
         DataTableServerResponse response = DataTableServerResponse.Success(1, 100, 50, data, continuationToken);
 
         // Assert
-        Assert.Equal(continuationToken, response.ContinuationToken);
-        Assert.Equal(1, response.Draw);
-        Assert.Equal(100, response.TotalRecords);
-        Assert.Equal(50, response.TotalFilteredRecords);
-        Assert.Equal(data, response.Data);
+        response.ContinuationToken.Should().Be(continuationToken);
+        response.Draw.Should().Be(1);
+        response.TotalRecords.Should().Be(100);
+        response.TotalFilteredRecords.Should().Be(50);
+        response.Data.Should().BeEquivalentTo(data);
     }
 
     [Test]
@@ -40,11 +41,11 @@ public sealed class ContinuationTokenTests
         DataTableServerResponse response = DataTableServerResponse.Success(1, 100, 50, data, null);
 
         // Assert
-        Assert.Null(response.ContinuationToken);
-        Assert.Equal(1, response.Draw);
-        Assert.Equal(100, response.TotalRecords);
-        Assert.Equal(50, response.TotalFilteredRecords);
-        Assert.Equal(data, response.Data);
+        response.ContinuationToken.Should().BeNull();
+        response.Draw.Should().Be(1);
+        response.TotalRecords.Should().Be(100);
+        response.TotalFilteredRecords.Should().Be(50);
+        response.Data.Should().BeEquivalentTo(data);
     }
 
     [Test]
@@ -65,12 +66,12 @@ public sealed class ContinuationTokenTests
         };
 
         // Assert
-        Assert.Equal("test-token-123", request.ContinuationToken);
-        Assert.Equal(1, request.Draw);
-        Assert.Equal(0, request.Start);
-        Assert.Equal(10, request.Length);
-        Assert.NotNull(request.Search);
-        Assert.NotNull(request.Order);
+        request.ContinuationToken.Should().Be("test-token-123");
+        request.Draw.Should().Be(1);
+        request.Start.Should().Be(0);
+        request.Length.Should().Be(10);
+        request.Search.Should().NotBeNull();
+        request.Order.Should().NotBeNull();
     }
 
     [Test]
@@ -86,10 +87,10 @@ public sealed class ContinuationTokenTests
         };
 
         // Assert
-        Assert.Null(request.ContinuationToken);
-        Assert.Equal(1, request.Draw);
-        Assert.Equal(0, request.Start);
-        Assert.Equal(10, request.Length);
+        request.ContinuationToken.Should().BeNull();
+        request.Draw.Should().Be(1);
+        request.Start.Should().Be(0);
+        request.Length.Should().Be(10);
     }
 
     [Test]
@@ -103,7 +104,7 @@ public sealed class ContinuationTokenTests
         int virtualStart = paging.CalculateVirtualStart(10);
 
         // Assert
-        Assert.Equal(0, virtualStart);
+        virtualStart.Should().Be(0);
     }
 
     [Test]
@@ -117,9 +118,9 @@ public sealed class ContinuationTokenTests
         paging.UpdateFromResponse(10, 5, continuationToken);
 
         // Assert
-        Assert.Equal(5, paging.GetPageRecordCount(0));
-        Assert.Equal(continuationToken, paging.GetContinuationToken(1));
-        Assert.True(paging.HasMorePages);
+        paging.GetPageRecordCount(0).Should().Be(5);
+        paging.GetContinuationToken(1).Should().Be(continuationToken);
+        paging.HasMorePages.Should().BeTrue();
     }
 
     [Test]
@@ -132,9 +133,9 @@ public sealed class ContinuationTokenTests
         paging.UpdateFromResponse(10, 5, null); // null continuation token indicates last page
 
         // Assert
-        Assert.Equal(5, paging.GetPageRecordCount(0));
-        Assert.Null(paging.GetContinuationToken(1));
-        Assert.False(paging.HasMorePages);
+        paging.GetPageRecordCount(0).Should().Be(5);
+        paging.GetContinuationToken(1).Should().BeNull();
+        paging.HasMorePages.Should().BeFalse();
     }
 
     [Test]
@@ -150,10 +151,10 @@ public sealed class ContinuationTokenTests
         paging.Reset();
 
         // Assert
-        Assert.Null(paging.GetContinuationToken(0));
-        Assert.Equal(0, paging.GetPageRecordCount(0));
-        Assert.Equal(0, paging.EstimatedTotalRecords);
-        Assert.True(paging.HasMorePages);
+        paging.GetContinuationToken(0).Should().BeNull();
+        paging.GetPageRecordCount(0).Should().Be(0);
+        paging.EstimatedTotalRecords.Should().Be(0);
+        paging.HasMorePages.Should().BeTrue();
     }
 
     [Test]
@@ -171,7 +172,7 @@ public sealed class ContinuationTokenTests
         string? tokenForPage1 = paging.GetBestTokenForPage(1, 10);
 
         // Assert
-        Assert.Equal("token_page_1", tokenForPage1);
+        tokenForPage1.Should().Be("token_page_1");
     }
 
     [Test]
@@ -188,7 +189,7 @@ public sealed class ContinuationTokenTests
         string? tokenForPage1 = paging.GetBestTokenForPage(1, 10);
 
         // Assert - Should return the closest token (page 0 in this case)
-        Assert.Equal("token_page_0", tokenForPage1);
+        tokenForPage1.Should().Be("token_page_0");
     }
 
     [Test]
@@ -206,7 +207,7 @@ public sealed class ContinuationTokenTests
         string? tokenForPage2 = paging.GetBestTokenForPage(2, 10);
 
         // Assert
-        Assert.Equal("token_page_2", tokenForPage2);
+        tokenForPage2.Should().Be("token_page_2");
     }
 
     [Test]
@@ -243,14 +244,14 @@ public sealed class ContinuationTokenTests
 
         // Act & Assert - Test with very large page numbers
         paging.SetContinuationToken(int.MaxValue, "large_token");
-        Assert.Equal("large_token", paging.GetContinuationToken(int.MaxValue));
+        paging.GetContinuationToken(int.MaxValue).Should().Be("large_token");
 
         // Act & Assert - Test with zero page number
         paging.SetContinuationToken(0, "zero_token");
-        Assert.Equal("zero_token", paging.GetContinuationToken(0));
+        paging.GetContinuationToken(0).Should().Be("zero_token");
 
         // Act & Assert - Test with null tokens
         paging.SetContinuationToken(1, null);
-        Assert.Null(paging.GetContinuationToken(1));
+        paging.GetContinuationToken(1).Should().BeNull();
     }
 } 

@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Moq;
+using AwesomeAssertions;
 using Soenneker.Blazor.DataTables.Options;
 
 namespace Soenneker.Blazor.DataTables.Tests;
@@ -34,17 +35,17 @@ public sealed class ContinuationTokenNavigationTests
 
         // Act & Assert - Test backward navigation
         string? tokenForPage2 = paging.GetBestTokenForPage(2, pageSize);
-        Assert.Equal("token_page_2", tokenForPage2);
+        tokenForPage2.Should().Be("token_page_2");
 
         string? tokenForPage1 = paging.GetBestTokenForPage(1, pageSize);
-        Assert.Equal("token_page_1", tokenForPage1);
+        tokenForPage1.Should().Be("token_page_1");
 
         string? tokenForPage0 = paging.GetBestTokenForPage(0, pageSize);
-        Assert.Null(tokenForPage0); // First page has no token
+        tokenForPage0.Should().BeNull(); // First page has no token
 
         // Test forward navigation
         string? tokenForPage3 = paging.GetBestTokenForPage(3, pageSize);
-        Assert.Equal("token_page_3", tokenForPage3);
+        tokenForPage3.Should().Be("token_page_3");
     }
 
     [Test]
@@ -77,11 +78,11 @@ public sealed class ContinuationTokenNavigationTests
         string? tokenForPage2Third = paging.GetBestTokenForPage(2, pageSize);
 
         // Assert - Should always return the same token
-        Assert.Equal("token_page_2", tokenForPage2First);
-        Assert.Equal("token_page_2", tokenForPage2Second);
-        Assert.Equal("token_page_2", tokenForPage2Third);
-        Assert.Equal(tokenForPage2First, tokenForPage2Second);
-        Assert.Equal(tokenForPage2Second, tokenForPage2Third);
+        tokenForPage2First.Should().Be("token_page_2");
+        tokenForPage2Second.Should().Be("token_page_2");
+        tokenForPage2Third.Should().Be("token_page_2");
+        tokenForPage2First.Should().Be(tokenForPage2Second);
+        tokenForPage2Second.Should().Be(tokenForPage2Third);
     }
 
     [Test]
@@ -98,13 +99,13 @@ public sealed class ContinuationTokenNavigationTests
 
         // Act & Assert - Test navigation to missing pages
         string? tokenForPage1 = paging.GetBestTokenForPage(1, pageSize);
-        Assert.Null(tokenForPage1); // Should use page 0 token (null)
+        tokenForPage1.Should().BeNull(); // Should use page 0 token (null)
 
         string? tokenForPage3 = paging.GetBestTokenForPage(3, pageSize);
-        Assert.Equal("token_page_2", tokenForPage3); // Should use page 2 token
+        tokenForPage3.Should().Be("token_page_2"); // Should use page 2 token
 
         string? tokenForPage5 = paging.GetBestTokenForPage(5, pageSize);
-        Assert.Equal("token_page_4", tokenForPage5); // Should use page 4 token
+        tokenForPage5.Should().Be("token_page_4"); // Should use page 4 token
     }
 
     [Test]
@@ -123,11 +124,11 @@ public sealed class ContinuationTokenNavigationTests
         paging.Reset();
 
         // Assert
-        Assert.Null(paging.GetContinuationToken(1));
-        Assert.Null(paging.GetContinuationToken(2));
-        Assert.Equal(0, paging.GetPageRecordCount(0));
-        Assert.Equal(0, paging.EstimatedTotalRecords);
-        Assert.True(paging.HasMorePages);
+        paging.GetContinuationToken(1).Should().BeNull();
+        paging.GetContinuationToken(2).Should().BeNull();
+        paging.GetPageRecordCount(0).Should().Be(0);
+        paging.EstimatedTotalRecords.Should().Be(0);
+        paging.HasMorePages.Should().BeTrue();
     }
 
     [Test]
@@ -138,14 +139,14 @@ public sealed class ContinuationTokenNavigationTests
         var pageSize = 10;
 
         // Act & Assert - Test with default current page (0)
-        Assert.Equal(0, paging.CalculateVirtualStart(pageSize));
+        paging.CalculateVirtualStart(pageSize).Should().Be(0);
 
         // Test by calling UpdateVirtualPage which sets the current page
         paging.UpdateVirtualPage(10, pageSize, null); // This sets current page to 1
-        Assert.Equal(10, paging.CalculateVirtualStart(pageSize));
+        paging.CalculateVirtualStart(pageSize).Should().Be(10);
 
         paging.UpdateVirtualPage(50, pageSize, null); // This sets current page to 5
-        Assert.Equal(50, paging.CalculateVirtualStart(pageSize));
+        paging.CalculateVirtualStart(pageSize).Should().Be(50);
     }
 
     [Test]
@@ -165,6 +166,6 @@ public sealed class ContinuationTokenNavigationTests
         int totalRecords = paging.CalculateTotalRecords(pageSize);
 
         // Assert - Should estimate based on known pages plus some buffer
-        Assert.True(totalRecords >= 30); // At least the known records
+        totalRecords.Should().BeGreaterThanOrEqualTo(30); // At least the known records
     }
 } 
