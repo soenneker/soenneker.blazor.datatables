@@ -992,10 +992,6 @@
     --tw-translate-y: calc(var(--spacing) * 0.5);
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
-  .translate-y-\[calc\(-50\%_-_2px\)\] {
-    --tw-translate-y: calc(-50% - 2px);
-    translate: var(--tw-translate-x) var(--tw-translate-y);
-  }
   .scale-105 {
     --tw-scale-x: 105%;
     --tw-scale-y: 105%;
@@ -7793,6 +7789,18 @@
       rotate: 180deg;
     }
   }
+  .\[\[data-side\=bottom\]_\&\]\:-translate-y-1\/2 {
+    [data-side=bottom] & {
+      --tw-translate-y: calc(calc(1 / 2 * 100%) * -1);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+  }
+  .\[\[data-side\=left\]_\&\]\:translate-x-1\/2 {
+    [data-side=left] & {
+      --tw-translate-x: calc(1 / 2 * 100%);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+  }
   .\[\[data-side\=left\]\[data-collapsible\=offcanvas\]_\&\]\:-right-2 {
     [data-side=left][data-collapsible=offcanvas] & {
       right: calc(var(--spacing) * -2);
@@ -7803,6 +7811,12 @@
       cursor: e-resize;
     }
   }
+  .\[\[data-side\=right\]_\&\]\:-translate-x-1\/2 {
+    [data-side=right] & {
+      --tw-translate-x: calc(calc(1 / 2 * 100%) * -1);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+  }
   .\[\[data-side\=right\]\[data-collapsible\=offcanvas\]_\&\]\:-left-2 {
     [data-side=right][data-collapsible=offcanvas] & {
       left: calc(var(--spacing) * -2);
@@ -7811,6 +7825,12 @@
   .\[\[data-side\=right\]\[data-state\=collapsed\]_\&\]\:cursor-w-resize {
     [data-side=right][data-state=collapsed] & {
       cursor: w-resize;
+    }
+  }
+  .\[\[data-side\=top\]_\&\]\:translate-y-1\/2 {
+    [data-side=top] & {
+      --tw-translate-y: calc(1 / 2 * 100%);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
     }
   }
   .\[\[data-variant\=legend\]\+\&\]\:-mt-1\.5 {

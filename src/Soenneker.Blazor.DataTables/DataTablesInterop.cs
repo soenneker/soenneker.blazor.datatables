@@ -35,14 +35,6 @@ public sealed class DataTablesInterop : IDataTablesInterop
         _styleInitializer = new AsyncInitializer(InitializeStyle);
     }
 
-    private static string NormalizeContentUri(string uri)
-    {
-        if (uri.IsNullOrEmpty() || uri.Contains("://", StringComparison.Ordinal))
-            return uri;
-
-        return uri[0] == '/' ? uri : "/" + uri;
-    }
-
     private async ValueTask InitializeScript(CancellationToken token)
     {
         _ = await _moduleImportUtil.GetContentModuleReference(_modulePath, token);
@@ -50,7 +42,7 @@ public sealed class DataTablesInterop : IDataTablesInterop
 
     private async ValueTask InitializeStyle(CancellationToken token)
     {
-        await _resourceLoader.LoadStyle(NormalizeContentUri("_content/Soenneker.Blazor.DataTables/css/datatables.css"), cancellationToken: token);
+        await _resourceLoader.LoadStyle("_content/Soenneker.Blazor.DataTables/css/datatables.css", cancellationToken: token);
     }
 
     public async ValueTask Initialize(CancellationToken cancellationToken = default)

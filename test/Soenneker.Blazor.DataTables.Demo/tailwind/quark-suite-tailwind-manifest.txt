@@ -502,10 +502,14 @@ Year
 [.border-t]:pt-3
 [CanvasText]
 [Canvas]
+[[data-side=bottom]_&]:-translate-y-1/2
 [[data-side=left][data-collapsible=offcanvas]_&]:-right-2
 [[data-side=left][data-state=collapsed]_&]:cursor-e-resize
+[[data-side=left]_&]:translate-x-1/2
 [[data-side=right][data-collapsible=offcanvas]_&]:-left-2
 [[data-side=right][data-state=collapsed]_&]:cursor-w-resize
+[[data-side=right]_&]:-translate-x-1/2
+[[data-side=top]_&]:translate-y-1/2
 [[data-variant=legend]+&]:-mt-1.5
 [a]:hover:bg-destructive/20
 [a]:hover:bg-muted
@@ -2850,7 +2854,6 @@ transition-transform
 translate-x-[-50%]
 translate-x-px
 translate-y-0.5
-translate-y-[calc(-50%_-_2px)]
 tree
 tree-view
 tree-view-node
