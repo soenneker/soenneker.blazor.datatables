@@ -11,7 +11,7 @@
 @using Soenneker.Extensions.CancellationTokens
 @using Soenneker.Blazor.Utils.Ids
 
-@inherits Soenneker.Quark.CoreCancellableElement
+@inherits Soenneker.Lepton.Suite.LeptonCancellableIdentifiableContentElement
 @implements IDataTable
 
 <div style="@(Visible ? "" : "display:none")" >
@@ -24,7 +24,7 @@
             </div>
         }
 
-        <table id="@Id" @ref="_elementReference" @attributes="Attributes" >
+        <table id="@Id" @ref="_elementReference" @attributes="EffectiveAttributes" >
             @ChildContent
         </table>
     </div>
@@ -65,7 +65,10 @@
 
     private DotNetObjectReference<DataTable>? _dotNetReference;
 
-    public override string? Id { get; set; } = BlazorIdGenerator.New("datatable");
+    public DataTable()
+    {
+        Id = BlazorIdGenerator.New("datatable");
+    }
 
     private ElementReference _elementReference;
 

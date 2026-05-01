@@ -5,14 +5,14 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Soenneker.DataTables.Dtos.ServerResponse;
-using Soenneker.Quark;
+using Soenneker.Lepton.Suite.Abstract;
 
 namespace Soenneker.Blazor.DataTables.Abstract;
 
 /// <summary>
 /// Defines the contract for a Blazor DataTable component with initialization, lifecycle management, and auto-render support.
 /// </summary>
-public interface IDataTable : ICoreCancellableElement
+public interface IDataTable : ILeptonCancellableIdentifiableContentElement
 {
     /// <summary>
     /// Gets or sets the DataTable configuration options.
