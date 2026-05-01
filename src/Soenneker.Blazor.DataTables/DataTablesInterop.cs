@@ -11,6 +11,7 @@ using Soenneker.Utils.Json;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Soenneker.Extensions.String;
 
 namespace Soenneker.Blazor.DataTables;
 
@@ -36,7 +37,7 @@ public sealed class DataTablesInterop : IDataTablesInterop
 
     private static string NormalizeContentUri(string uri)
     {
-        if (string.IsNullOrEmpty(uri) || uri.Contains("://", StringComparison.Ordinal))
+        if (uri.IsNullOrEmpty() || uri.Contains("://", StringComparison.Ordinal))
             return uri;
 
         return uri[0] == '/' ? uri : "/" + uri;
