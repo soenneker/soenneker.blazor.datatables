@@ -128,18 +128,21 @@
     private readonly DataTableOptions _defaultTableOptions = new()
     {
         ServerSide = true,
+        LengthMenu = new[] { 5, 10, 25, 50, 100 },
         PageLength = 5
     };
 
     private readonly DataTableOptions _customTableOptions = new()
     {
         ServerSide = true,
+        LengthMenu = new[] { 5, 10, 25, 50, 100 },
         PageLength = 5
     };
 
     private readonly DataTableOptions _disabledTableOptions = new()
     {
         ServerSide = true,
+        LengthMenu = new[] { 5, 10, 25, 50, 100 },
         PageLength = 5,
         Processing = false
     };
@@ -147,6 +150,7 @@
     private readonly DataTableOptions _htmlTableOptions = new()
     {
         ServerSide = true,
+        LengthMenu = new[] { 5, 10, 25, 50, 100 },
         PageLength = 5
     };
 

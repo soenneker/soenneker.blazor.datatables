@@ -76,3 +76,137 @@ h1:focus {
 .text-muted {
     color: hsl(var(--muted-foreground));
 }
+
+/* DataTables uses the Bootstrap 5 adapter, but the demo intentionally does not load
+   global Bootstrap CSS because it conflicts with Quark utility class names. */
+.dt-container .row {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 1rem;
+    margin-right: -0.75rem;
+    margin-left: -0.75rem;
+}
+
+.dt-container [class*="col-"] {
+    width: 100%;
+    max-width: 100%;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+}
+
+@media (min-width: 768px) {
+    .dt-container .col-md-6 {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+}
+
+.dt-container .dt-layout-start,
+.dt-container .dt-layout-end {
+    display: flex;
+    align-items: center;
+}
+
+.dt-container .dt-layout-end {
+    justify-content: flex-end;
+}
+
+.dt-container .dt-length,
+.dt-container .dt-search {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dt-container .dt-search {
+    justify-content: flex-end;
+}
+
+.dt-container .dt-search label,
+.dt-container .dt-length label {
+    margin: 0;
+}
+
+.dt-container .form-select,
+.dt-container .form-control {
+    display: block;
+    min-height: 2.375rem;
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    background-color: var(--background);
+    padding: 0.375rem 0.75rem;
+    color: var(--foreground);
+    font: inherit;
+}
+
+.dt-container .form-select {
+    width: auto;
+    min-width: 4.25rem;
+    padding-right: 2rem;
+}
+
+.dt-container .form-control {
+    width: 14rem;
+}
+
+.dt-container table.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-collapse: collapse;
+    color: var(--foreground);
+    vertical-align: top;
+}
+
+.dt-container table.table > :not(caption) > * > * {
+    padding: 0.35rem 0.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.dt-container table.table > thead > tr > th {
+    font-weight: 700;
+}
+
+.dt-container table.table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: color-mix(in oklab, var(--muted) 55%, transparent);
+}
+
+.dt-container .dt-info {
+    padding-top: 0.5rem;
+}
+
+.dt-container .dt-paging {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.dt-container .pagination {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.dt-container .page-link {
+    position: relative;
+    display: block;
+    min-width: 2.25rem;
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    background-color: var(--background);
+    padding: 0.375rem 0.75rem;
+    color: var(--foreground);
+    text-align: center;
+    text-decoration: none;
+}
+
+.dt-container .page-item.active .page-link {
+    border-color: var(--primary);
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+}
+
+.dt-container .page-item.disabled .page-link {
+    opacity: 0.45;
+    pointer-events: none;
+}
