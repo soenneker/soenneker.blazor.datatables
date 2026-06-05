@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace Soenneker.Blazor.DataTables.Options.Responsive;
 
+/// <summary>
+/// Represents the data table responsive details.
+/// </summary>
 public sealed class DataTableResponsiveDetails
 {
 

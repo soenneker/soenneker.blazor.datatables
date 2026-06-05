@@ -8,6 +8,9 @@ using System.Text.Json.Serialization;
 
 namespace Soenneker.Blazor.DataTables.Options;
 
+/// <summary>
+/// Represents the data table options.
+/// </summary>
 public sealed partial class DataTableOptions
 {
     /// <summary>

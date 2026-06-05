@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace Soenneker.Blazor.DataTables.Options.RowGroup;
 
+/// <summary>
+/// Represents the data table row group options.
+/// </summary>
 public sealed class DataTableRowGroupOptions
 {
     /// <summary>

@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace Soenneker.Blazor.DataTables.Options.Language.Buttons;
 
+/// <summary>
+/// Represents the data tables language buttons options.
+/// </summary>
 public sealed class DataTablesLanguageButtonsOptions
 {
     /// <summary>

@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace Soenneker.Blazor.DataTables.Options.Columns;
 
+/// <summary>
+/// Represents the data table column def.
+/// </summary>
 public sealed class DataTableColumnDef
 {
     /// <summary>

@@ -3,6 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace Soenneker.Blazor.DataTables.Options.Search;
 
+/// <summary>
+/// Represents the data tables search configuration.
+/// </summary>
 public sealed class DataTablesSearchConfiguration
 {
     /// <summary>

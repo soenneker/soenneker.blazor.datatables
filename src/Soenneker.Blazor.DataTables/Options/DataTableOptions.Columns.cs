@@ -5,6 +5,9 @@ using Soenneker.DataTables.Dtos.Column;
 
 namespace Soenneker.Blazor.DataTables.Options;
 
+/// <summary>
+/// Represents the data table options.
+/// </summary>
 public sealed partial class DataTableOptions
 {
     /// <summary>

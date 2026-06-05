@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace Soenneker.Blazor.DataTables.Options.Language.Aria;
 
+/// <summary>
+/// Represents the data table language aria paginate options.
+/// </summary>
 public sealed class DataTableLanguageAriaPaginateOptions
 {
     /// <summary>

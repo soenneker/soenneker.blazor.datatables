@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace Soenneker.Blazor.DataTables.Options.RowReorder;
 
+/// <summary>
+/// Represents the data table row reorder options.
+/// </summary>
 public sealed class DataTableRowReorderOptions
 {
     /// <summary>

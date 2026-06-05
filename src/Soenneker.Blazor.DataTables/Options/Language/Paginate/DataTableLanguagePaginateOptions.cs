@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace Soenneker.Blazor.DataTables.Options.Language.Paginate;
 
+/// <summary>
+/// Represents the data table language paginate options.
+/// </summary>
 public sealed class DataTableLanguagePaginateOptions
 {
     /// <summary>

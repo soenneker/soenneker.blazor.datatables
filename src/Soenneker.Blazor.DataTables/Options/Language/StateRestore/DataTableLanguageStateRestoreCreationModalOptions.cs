@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace Soenneker.Blazor.DataTables.Options.Language.StateRestore;
 
+/// <summary>
+/// Represents the data tables language state restore creation modal options.
+/// </summary>
 public sealed class DataTablesLanguageStateRestoreCreationModalOptions
 {
     /// <summary>

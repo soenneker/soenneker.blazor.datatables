@@ -3,6 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace Soenneker.Blazor.DataTables.Options.Buttons;
 
+/// <summary>
+/// Represents the data table button definition.
+/// </summary>
 public sealed class DataTableButtonDefinition
 {
     /// <summary>

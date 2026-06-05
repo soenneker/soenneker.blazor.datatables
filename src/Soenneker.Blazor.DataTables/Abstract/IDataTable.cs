@@ -33,10 +33,19 @@ public interface IDataTable : ILeptonCancellableIdentifiableContentElement
     /// <returns>A ValueTask representing the callback logic.</returns>
     ValueTask OnInitializedJs();
 
+    /// <summary>
+    /// Gets or sets on initialize.
+    /// </summary>
     EventCallback OnInitialize { get; set; }
 
+    /// <summary>
+    /// Gets or sets on destroy.
+    /// </summary>
     EventCallback OnDestroy { get; set; }
 
+    /// <summary>
+    /// Gets or sets on server side request.
+    /// </summary>
     Func<DataTableServerSideRequest, Task<DataTableServerResponse>>? OnServerSideRequest { get; set; }
 
     /// <summary>
@@ -75,5 +84,8 @@ public interface IDataTable : ILeptonCancellableIdentifiableContentElement
     /// <returns>A <see cref="ValueTask"/> representing the asynchronous operation.</returns>
     ValueTask RefreshWithDomUpdate(Action domMutator, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Gets or sets a value indicating whether visible.
+    /// </summary>
     bool Visible { get; set; }
 }

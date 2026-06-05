@@ -3,6 +3,9 @@ using Soenneker.Blazor.DataTables.Options.Responsive;
 
 namespace Soenneker.Blazor.DataTables.Options;
 
+/// <summary>
+/// Represents the data table options.
+/// </summary>
 public sealed partial class DataTableOptions
 {
     /// <summary>

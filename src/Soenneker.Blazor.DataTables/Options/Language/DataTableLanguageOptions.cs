@@ -5,6 +5,9 @@ using Soenneker.Blazor.DataTables.Options.Language.StateRestore;
 
 namespace Soenneker.Blazor.DataTables.Options.Language;
 
+/// <summary>
+/// Represents the data table language options.
+/// </summary>
 public sealed class DataTableLanguageOptions
 {
     /// <summary>
