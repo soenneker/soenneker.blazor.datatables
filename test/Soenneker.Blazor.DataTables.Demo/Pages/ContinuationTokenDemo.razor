@@ -32,11 +32,11 @@
     </DemoPanel>
 
     <DemoPanel Title="Table" Description="Server-side with processing overlay enabled.">
-        <DataTable @ref="_dataTable"
-                   OnServerSideRequest="HandleServerSideRequest"
-                   Options="_tableOptions"
-                   class="table table-sm dt-responsive table-striped"
-                   style="width: 100%">
+        <Soenneker.Blazor.DataTables.DataTable @ref="_dataTable"
+                                               OnServerSideRequest="HandleServerSideRequest"
+                                               Options="_tableOptions"
+                                               class="table table-sm dt-responsive table-striped"
+                                               style="width: 100%">
             <thead>
                 <tr>
                     <th data-data="id">ID</th>
@@ -48,15 +48,15 @@
             </thead>
             <tbody>
             </tbody>
-        </DataTable>
+        </Soenneker.Blazor.DataTables.DataTable>
     </DemoPanel>
 </Div>
 
 @code {
-    private DataTable _dataTable = null!;
+    private DataTables.DataTable _dataTable = null!;
     private string? _currentToken;
 
-    private readonly DataTableOptions _tableOptions = new()
+    private readonly Options.DataTableOptions _tableOptions = new()
     {
         ServerSide = true,
         LengthMenu = new[] { 5, 10, 25, 50, 100 },

@@ -22,11 +22,11 @@
 
     <Grid Columns="GridCols.Is1.OnMd.Is2" Gap="Gap.Is4">
         <DemoPanel Title="Default processing" Description="Built-in DataTables processing text.">
-            <DataTable @ref="_defaultDataTable"
-                       OnServerSideRequest="HandleServerSideRequest"
-                       Options="_defaultTableOptions"
-                       class="table table-sm dt-responsive table-striped"
-                       style="width: 100%">
+            <Soenneker.Blazor.DataTables.DataTable @ref="_defaultDataTable"
+                                                   OnServerSideRequest="HandleServerSideRequest"
+                                                   Options="_defaultTableOptions"
+                                                   class="table table-sm dt-responsive table-striped"
+                                                   style="width: 100%">
                 <thead>
                     <tr>
                         <th data-data="id">ID</th>
@@ -37,15 +37,15 @@
                 </thead>
                 <tbody>
                 </tbody>
-            </DataTable>
+            </Soenneker.Blazor.DataTables.DataTable>
         </DemoPanel>
 
         <DemoPanel Title="Custom processing" Description="Spinner and message in ProcessingIndicator.">
-            <DataTable @ref="_customDataTable"
-                       OnServerSideRequest="HandleServerSideRequest"
-                       Options="_customTableOptions"
-                       class="table table-sm dt-responsive table-striped"
-                       style="width: 100%">
+            <Soenneker.Blazor.DataTables.DataTable @ref="_customDataTable"
+                                                   OnServerSideRequest="HandleServerSideRequest"
+                                                   Options="_customTableOptions"
+                                                   class="table table-sm dt-responsive table-striped"
+                                                   style="width: 100%">
                 <ProcessingIndicator>
                     <div class="text-center">
                         <div class="spinner-border text-primary" role="status"></div>
@@ -64,15 +64,15 @@
                     <tbody>
                     </tbody>
                 </ChildContent>
-            </DataTable>
+            </Soenneker.Blazor.DataTables.DataTable>
         </DemoPanel>
 
         <DemoPanel Title="Processing disabled" Description="Processing option off; empty indicator slot.">
-            <DataTable @ref="_disabledDataTable"
-                       OnServerSideRequest="HandleServerSideRequest"
-                       Options="_disabledTableOptions"
-                       class="table table-sm dt-responsive table-striped"
-                       style="width: 100%">
+            <Soenneker.Blazor.DataTables.DataTable @ref="_disabledDataTable"
+                                                   OnServerSideRequest="HandleServerSideRequest"
+                                                   Options="_disabledTableOptions"
+                                                   class="table table-sm dt-responsive table-striped"
+                                                   style="width: 100%">
                 <ProcessingIndicator></ProcessingIndicator>
                 <ChildContent>
                     <thead>
@@ -86,15 +86,15 @@
                     <tbody>
                     </tbody>
                 </ChildContent>
-            </DataTable>
+            </Soenneker.Blazor.DataTables.DataTable>
         </DemoPanel>
 
         <DemoPanel Title="HTML processing block" Description="Spinner plus secondary line of copy.">
-            <DataTable @ref="_htmlDataTable"
-                       OnServerSideRequest="HandleServerSideRequest"
-                       Options="_htmlTableOptions"
-                       class="table table-sm dt-responsive table-striped"
-                       style="width: 100%">
+            <Soenneker.Blazor.DataTables.DataTable @ref="_htmlDataTable"
+                                                   OnServerSideRequest="HandleServerSideRequest"
+                                                   Options="_htmlTableOptions"
+                                                   class="table table-sm dt-responsive table-striped"
+                                                   style="width: 100%">
                 <ProcessingIndicator>
                     <div class="text-center">
                         <div class="spinner-border text-primary" role="status"></div>
@@ -114,32 +114,32 @@
                     <tbody>
                     </tbody>
                 </ChildContent>
-            </DataTable>
+            </Soenneker.Blazor.DataTables.DataTable>
         </DemoPanel>
     </Grid>
 </Div>
 
 @code {
-    private DataTable _defaultDataTable = null!;
-    private DataTable _customDataTable = null!;
-    private DataTable _disabledDataTable = null!;
-    private DataTable _htmlDataTable = null!;
+    private DataTables.DataTable _defaultDataTable = null!;
+    private DataTables.DataTable _customDataTable = null!;
+    private DataTables.DataTable _disabledDataTable = null!;
+    private DataTables.DataTable _htmlDataTable = null!;
 
-    private readonly DataTableOptions _defaultTableOptions = new()
+    private readonly Options.DataTableOptions _defaultTableOptions = new()
     {
         ServerSide = true,
         LengthMenu = new[] { 5, 10, 25, 50, 100 },
         PageLength = 5
     };
 
-    private readonly DataTableOptions _customTableOptions = new()
+    private readonly Options.DataTableOptions _customTableOptions = new()
     {
         ServerSide = true,
         LengthMenu = new[] { 5, 10, 25, 50, 100 },
         PageLength = 5
     };
 
-    private readonly DataTableOptions _disabledTableOptions = new()
+    private readonly Options.DataTableOptions _disabledTableOptions = new()
     {
         ServerSide = true,
         LengthMenu = new[] { 5, 10, 25, 50, 100 },
@@ -147,7 +147,7 @@
         Processing = false
     };
 
-    private readonly DataTableOptions _htmlTableOptions = new()
+    private readonly Options.DataTableOptions _htmlTableOptions = new()
     {
         ServerSide = true,
         LengthMenu = new[] { 5, 10, 25, 50, 100 },

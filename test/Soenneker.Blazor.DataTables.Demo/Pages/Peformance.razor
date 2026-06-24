@@ -14,7 +14,7 @@
     </Div>
 
     <DemoPanel Title="Heavy table" Description="Same row shape as the home demo with more rows.">
-        <DataTable Options="_options">
+        <Soenneker.Blazor.DataTables.DataTable Options="_options">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -42,7 +42,7 @@
                     </tr>
                 }
             </tbody>
-        </DataTable>
+        </Soenneker.Blazor.DataTables.DataTable>
     </DemoPanel>
 
     <DemoPanel Title="Navigation" Description="Return to the main demo.">
@@ -54,7 +54,7 @@
 
 @code
 {
-    DataTableOptions _options;
+    Options.DataTableOptions _options = null!;
 
     readonly List<Employee> _employees = [];
 
@@ -65,7 +65,7 @@
             _employees.Add(new Employee { Name = "John Doe", Position = "Developer", City = "London", Age = 28, StartDate = DateTime.UtcNow, Salary = 320800 });
         }
 
-        _options = new DataTableOptions
+        _options = new Options.DataTableOptions
         {
             Dom = "Bfrtip",
             Searching = true,

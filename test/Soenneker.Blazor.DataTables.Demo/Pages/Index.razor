@@ -15,7 +15,7 @@
     </Div>
 
     <DemoPanel Title="Sample table" Description="Ten bogus employees; toggle rendering or clear the bound list.">
-        <DataTable @ref="_dataTable" Options="_options" class="table table-sm dt-responsive table-striped" style="width: 100%" OnInitialize="OnDataTableInitialized">
+        <Soenneker.Blazor.DataTables.DataTable @ref="_dataTable" Options="_options" class="table table-sm dt-responsive table-striped" style="width: 100%" OnInitialize="OnDataTableInitialized">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -42,7 +42,7 @@
                     }
                 }
             </tbody>
-        </DataTable>
+        </Soenneker.Blazor.DataTables.DataTable>
     </DemoPanel>
 
     <DemoPanel Title="Actions" Description="Interop helpers and navigation.">
@@ -62,13 +62,13 @@
 </Div>
 
 @code {
-    private DataTableOptions _options = null!;
+    private Options.DataTableOptions _options = null!;
 
-    private DataTable? _dataTable;
+    private Soenneker.Blazor.DataTables.DataTable? _dataTable;
 
     private bool _renderData = true;
 
-    private List<Employee> _people;
+    private List<Employee> _people = null!;
 
     private readonly AutoFaker _autoFaker = new();
 
@@ -76,7 +76,7 @@
     {
         _people = GeneratePeople();
 
-        _options = new DataTableOptions
+        _options = new Options.DataTableOptions
         {
             Dom = "Bfrtip",
             Searching = true,

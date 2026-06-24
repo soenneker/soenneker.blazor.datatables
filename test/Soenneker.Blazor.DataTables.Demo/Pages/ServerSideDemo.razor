@@ -21,9 +21,9 @@
     </Div>
 
     <DemoPanel Title="Users" Description="Empty tbody; rows supplied by the server response.">
-        <DataTable @ref="_dataTable"
-                   OnServerSideRequest="HandleServerSideRequest"
-                   Options="_tableOptions" class="table table-sm dt-responsive table-striped" style="width: 100%">
+        <Soenneker.Blazor.DataTables.DataTable @ref="_dataTable"
+                                               OnServerSideRequest="HandleServerSideRequest"
+                                               Options="_tableOptions" class="table table-sm dt-responsive table-striped" style="width: 100%">
             <thead>
                 <tr>
                     <th data-data="id">ID</th>
@@ -35,14 +35,14 @@
             </thead>
             <tbody>
             </tbody>
-        </DataTable>
+        </Soenneker.Blazor.DataTables.DataTable>
     </DemoPanel>
 </Div>
 
 @code {
-    private DataTable _dataTable = null!;
+    private DataTables.DataTable _dataTable = null!;
 
-    private readonly DataTableOptions _tableOptions = new()
+    private readonly Options.DataTableOptions _tableOptions = new()
     {
         ServerSide = true,
         PageLength = 10
