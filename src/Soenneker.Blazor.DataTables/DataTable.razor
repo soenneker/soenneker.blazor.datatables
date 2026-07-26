@@ -101,8 +101,17 @@
 
         if (!_elementInitialized && _elementReference.Id.HasContent())
         {
-            await Initialize();
             _elementInitialized = true;
+
+            try
+            {
+                await Initialize();
+            }
+            catch
+            {
+                _elementInitialized = false;
+                throw;
+            }
         }
     }
 

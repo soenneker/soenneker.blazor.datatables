@@ -16,6 +16,19 @@ Diligence was taken to align the Blazor API with JS. Refer to the [DataTables do
 dotnet add package Soenneker.Blazor.DataTables
 ```
 
+This package targets DataTables 3. Add DataTables 3 and the styling integration
+of your choice to the host application. DataTables 3 does not require jQuery.
+For example, with Bootstrap 5:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/datatables.net-bs5@3.0.0/css/dataTables.bootstrap5.min.css">
+<script src="https://cdn.jsdelivr.net/npm/datatables.net@3.0.0/js/dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/datatables.net-bs5@3.0.0/js/dataTables.bootstrap5.min.js"></script>
+```
+
+When using extensions, install their DataTables 3-compatible major versions
+(for example, Buttons 4 and Responsive 4).
+
 ### Add the following to your `Startup.cs` file
 
 ```csharp

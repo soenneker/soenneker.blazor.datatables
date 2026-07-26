@@ -100,7 +100,7 @@ export function create(element, elementId, options, dotNetCallback) {
                 }
             };
 
-            $.fn.dataTable.ext.pager.numbers_length = 10;
+            DataTable.ext.pager.numbers_length = 10;
         }
 
         _datatable = new DataTable('#' + elementId, opt);
@@ -171,7 +171,7 @@ export function refresh(elementId) {
     const dt = datatables[elementId];
     if (dt) {
         dt.clear();
-        dt.rows.add($(dt.table().body()).children());
+        dt.rows.add(Array.from(dt.table().body().children));
         dt.draw();
     }
 }
