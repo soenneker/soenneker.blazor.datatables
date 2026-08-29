@@ -59,6 +59,8 @@
     private readonly Options.DataTableOptions _tableOptions = new()
     {
         ServerSide = true,
+        UseContinuationTokenPaging = true,
+        PagingType = "simple",
         LengthMenu = new[] { 5, 10, 25, 50, 100 },
         PageLength = 5,
         Processing = true

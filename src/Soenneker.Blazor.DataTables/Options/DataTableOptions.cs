@@ -14,6 +14,12 @@ namespace Soenneker.Blazor.DataTables.Options;
 public sealed partial class DataTableOptions
 {
     /// <summary>
+    /// Enables the component's continuation-token paging adapter for server-side requests. Leave disabled for normal offset-based DataTables paging.
+    /// </summary>
+    [JsonIgnore]
+    public bool UseContinuationTokenPaging { get; set; }
+
+    /// <summary>
     /// Delay the loading of server-side data until second draw.
     /// </summary>
     [JsonPropertyName("deferLoading")]

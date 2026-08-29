@@ -73,14 +73,15 @@ export function create(element, elementId, options, dotNetCallback) {
                         }
                     }
 
-                    const { data: tableData, totalRecords, totalFilteredRecords, continuationToken } = JSON.parse(result);
+                    const { data: tableData, totalRecords, totalFilteredRecords, continuationToken, error } = JSON.parse(result);
 
                     callback({
                         draw: data.draw,
                         recordsTotal: totalRecords,
                         recordsFiltered: totalFilteredRecords,
                         data: tableData,
-                        continuationToken: continuationToken
+                        continuationToken: continuationToken,
+                        error: error
                     });
                 } catch (error) {
                     if (opt.hasCustomProcessingIndicator) {

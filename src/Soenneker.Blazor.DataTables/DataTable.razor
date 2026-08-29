@@ -120,7 +120,14 @@
         if (configuration != null)
             Options = configuration;
 
-        _dotNetReference = DotNetObjectReference.Create(this);
+        if (_dotNetReference is not null)
+        {
+            await DataTablesInterop.Destroy(_elementReference, cancellationToken);
+            _dotNetReference.Dispose();
+            _dotNetReference = null;
+        }
+
+        DotNetObjectReference<DataTable> reference = DotNetObjectReference.Create(this);
 
         CancellationToken token = cancellationToken;
         CancellationTokenSource? cts = null;
@@ -130,8 +137,14 @@
 
         try
         {
-            await DataTablesInterop.Create(_elementReference, Id!, _dotNetReference, Options, token);
+            await DataTablesInterop.Create(_elementReference, Id!, reference, Options, token);
             await DataTablesInterop.CreateObserver(_elementReference, Id!, token);
+            _dotNetReference = reference;
+        }
+        catch
+        {
+            reference.Dispose();
+            throw;
         }
         finally
         {
@@ -201,17 +214,31 @@
     [JSInvokable]
     public async Task<string> OnServerSideRequestJs(string dataTablesRequestJson)
     {
+        var draw = 0;
+
         try
         {
             var request = JsonUtil.Deserialize<DataTableServerSideRequest>(dataTablesRequestJson);
 
             if (request == null)
-            {
-                return "{\"data\":[],\"recordsTotal\":0,\"recordsFiltered\":0,\"draw\":0}";
-            }
+                return EmptyServerResponse(draw);
+
+            draw = request.Draw;
+
+            if (request.Start < 0)
+                return EmptyServerResponse(draw, "The requested page range is invalid.");
 
             if (OnServerSideRequest != null)
             {
+                if (!Options.UseContinuationTokenPaging)
+                {
+                    DataTableServerResponse offsetResult = await OnServerSideRequest(request);
+                    return JsonUtil.Serialize(offsetResult)!;
+                }
+
+                if (request.Length <= 0)
+                    return EmptyServerResponse(draw, "Continuation-token paging requires a positive page length.");
+
                 string fp = Fingerprint(request);
 
                 if (fp != _lastFingerprint)
@@ -232,10 +259,13 @@
                 _continuationToken = result.ContinuationToken;
 
                 // Update the pagination helper with the response data
-                if (result.Data is IEnumerable<object> dataEnumerable)
+                if (result.Data is System.Collections.IEnumerable dataEnumerable && result.Data is not string)
                 {
-                    int recordCount = dataEnumerable.Count();
-                    int currentPage = request.Start / request.Length;
+                    var recordCount = 0;
+
+                    foreach (object? _ in dataEnumerable)
+                        recordCount++;
+
                     string? tokenUsedForThisPage = request.ContinuationToken;
 
                     // Store the continuation token from the response for the next page
@@ -250,26 +280,38 @@
                     Data = result.Data,
                     Error = result.Error,
                     ContinuationToken = result.ContinuationToken,
-                    TotalRecords = _pagingHelper.CalculateTotalRecords(request.Length),
-                    TotalFilteredRecords = _pagingHelper.CalculateFilteredRecords()
+                    TotalRecords = result.TotalRecords > 0 ? result.TotalRecords : _pagingHelper.CalculateTotalRecords(request.Length),
+                    TotalFilteredRecords = result.TotalFilteredRecords > 0 ? result.TotalFilteredRecords : _pagingHelper.CalculateFilteredRecords()
                 };
 
                 return JsonUtil.Serialize(modifiedResult)!;
             }
 
-            return "{\"data\":[],\"recordsTotal\":0,\"recordsFiltered\":0,\"draw\":0}";
+            return EmptyServerResponse(draw);
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Error processing server-side request: {Message}", ex.Message);
-            return "{\"data\":[],\"recordsTotal\":0,\"recordsFiltered\":0,\"draw\":0,\"error\":\"An error occurred while processing your request.\"}";
+            return EmptyServerResponse(draw, "An error occurred while processing your request.");
         }
     }
 
     private static string Fingerprint(DataTableServerSideRequest request)
     {
         // anything that changes the result set must appear here
-        return $"{request.Search?.Value}|{request.Length}|{JsonUtil.Serialize(request.Order)}";
+        return $"{request.Search?.Value}|{request.Length}|{JsonUtil.Serialize(request.Order)}|{JsonUtil.Serialize(request.Columns)}";
+    }
+
+    private static string EmptyServerResponse(int draw, string? error = null)
+    {
+        return JsonUtil.Serialize(new DataTableServerResponse
+        {
+            Draw = draw,
+            Data = Array.Empty<object>(),
+            TotalRecords = 0,
+            TotalFilteredRecords = 0,
+            Error = error
+        })!;
     }
 
     /// <summary>
@@ -295,9 +337,29 @@
 
     public override async ValueTask DisposeAsync()
     {
-        await base.DisposeAsync();
+        try
+        {
+            if (_elementInitialized)
+                await DataTablesInterop.Destroy(_elementReference, CancellationToken.None);
+        }
+        catch (JSException)
+        {
+            // JavaScript may already be unavailable during application teardown.
+        }
+        catch (OperationCanceledException)
+        {
+        }
 
         _dotNetReference?.Dispose();
-        await OnDestroy.InvokeAsync();
+        _dotNetReference = null;
+
+        try
+        {
+            await OnDestroy.InvokeAsync();
+        }
+        finally
+        {
+            await base.DisposeAsync();
+        }
     }
 }
