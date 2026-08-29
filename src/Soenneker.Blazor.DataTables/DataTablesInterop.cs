@@ -111,12 +111,12 @@ public sealed class DataTablesInterop : IDataTablesInterop
     /// <summary>
     /// Adds event listener.
     /// </summary>
-    /// <param name="functionName">The function name.</param>
-    /// <param name="elementId">The element id.</param>
-    /// <param name="eventName">The event name.</param>
-    /// <param name="dotNetCallback">The dot net callback.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A task that represents the asynchronous operation.</returns>
+    /// <param name="functionName">JavaScript callback function to invoke.</param>
+    /// <param name="elementId">ID of the element that receives the listener.</param>
+    /// <param name="eventName">Browser event to listen for.</param>
+    /// <param name="dotNetCallback">dot Net Callback to invoke when the operation runs.</param>
+    /// <param name="cancellationToken">Token used to cancel the operation.</param>
+    /// <returns>A task that completes after the event listener has been attached.</returns>
     public async ValueTask AddEventListener(string functionName, string elementId, string eventName, object dotNetCallback,
         CancellationToken cancellationToken = default)
     {
