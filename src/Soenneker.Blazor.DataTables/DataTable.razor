@@ -261,10 +261,18 @@
                 // Update the pagination helper with the response data
                 if (result.Data is System.Collections.IEnumerable dataEnumerable && result.Data is not string)
                 {
-                    var recordCount = 0;
+                    int recordCount;
 
-                    foreach (object? _ in dataEnumerable)
-                        recordCount++;
+                    if (dataEnumerable is System.Collections.ICollection collection)
+                    {
+                        recordCount = collection.Count;
+                    }
+                    else
+                    {
+                        recordCount = 0;
+                        foreach (object? _ in dataEnumerable)
+                            recordCount++;
+                    }
 
                     string? tokenUsedForThisPage = request.ContinuationToken;
 

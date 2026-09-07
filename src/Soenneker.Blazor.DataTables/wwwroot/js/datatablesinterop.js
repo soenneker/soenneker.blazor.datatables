@@ -1,12 +1,16 @@
 const datatables = {};
-const datatableOptions = {};
 const elementObservers = {};
 
 function normalizeNulls(obj) {
     function walk(value) {
         if (value === "null" || value === "__NULL__") return null;
 
-        if (Array.isArray(value)) return value.map(walk);
+        if (Array.isArray(value)) {
+            for (let i = 0; i < value.length; i++) {
+                value[i] = walk(value[i]);
+            }
+            return value;
+        }
 
         if (value !== null && typeof value === "object") {
             for (const key in value) {
@@ -105,7 +109,6 @@ export function create(element, elementId, options, dotNetCallback) {
         }
 
         _datatable = new DataTable('#' + elementId, opt);
-        datatableOptions[elementId] = opt;
     } else {
         _datatable = new DataTable('#' + elementId, {
             initComplete: async () => {
@@ -143,11 +146,12 @@ export async function addEventListener(elementId, eventName, dotNetCallback) {
                 const processedArgs = args.map(arg => {
                     if (typeof arg === 'object' && arg !== null) {
                         if (arg instanceof DataTable.Api) {
+                            const info = arg.page.info();
                             return {
-                                page: arg.page.info().page + 1,
-                                length: arg.page.info().length,
-                                recordsTotal: arg.page.info().recordsTotal,
-                                recordsDisplay: arg.page.info().recordsDisplay
+                                page: info.page + 1,
+                                length: info.length,
+                                recordsTotal: info.recordsTotal,
+                                recordsDisplay: info.recordsDisplay
                             };
                         }
                         const result = {};
@@ -186,12 +190,13 @@ export function createObserver(element) {
     }
 
     const observer = new MutationObserver((mutations) => {
-        const targetRemoved = mutations.some(mutation =>
-            Array.from(mutation.removedNodes).includes(element)
-        );
-
-        if (targetRemoved) {
-            destroy(element);
+        for (const mutation of mutations) {
+            for (const removedNode of mutation.removedNodes) {
+                if (removedNode === element) {
+                    destroy(element);
+                    return;
+                }
+            }
         }
     });
 

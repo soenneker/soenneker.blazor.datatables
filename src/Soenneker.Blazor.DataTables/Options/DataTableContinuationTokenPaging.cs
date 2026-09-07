@@ -9,8 +9,10 @@ namespace Soenneker.Blazor.DataTables.Options;
 /// </summary>
 public class DataTableContinuationTokenPaging
 {
-    private readonly Dictionary<string, string> _pageTokens = new();
-    private readonly Dictionary<string, int> _pageCounts = new();
+    private readonly Dictionary<int, string> _pageTokens = new();
+    private readonly Dictionary<int, int> _pageCounts = new();
+    private int _knownRecords;
+    private int _maxPage = -1;
     private int _currentVirtualPage = 0;
     private int _estimatedTotalRecords = 0;
     private bool _hasMorePages = true;
@@ -52,7 +54,7 @@ public class DataTableContinuationTokenPaging
             throw new ArgumentException("pageNumber must be non-negative", nameof(pageNumber));
         }
 
-        if (_pageTokens.TryGetValue(pageNumber.ToString(), out string? token))
+        if (_pageTokens.TryGetValue(pageNumber, out string? token))
         {
             // Return null for empty strings (which represent null tokens)
             return string.IsNullOrEmpty(token) ? null : token;
@@ -76,11 +78,11 @@ public class DataTableContinuationTokenPaging
         if (continuationToken == null)
         {
             // Store null tokens as empty string to distinguish from missing tokens
-            _pageTokens[pageNumber.ToString()] = string.Empty;
+            _pageTokens[pageNumber] = string.Empty;
         }
         else
         {
-            _pageTokens[pageNumber.ToString()] = continuationToken;
+            _pageTokens[pageNumber] = continuationToken;
         }
     }
 
@@ -97,7 +99,7 @@ public class DataTableContinuationTokenPaging
             throw new ArgumentException("pageNumber must be non-negative", nameof(pageNumber));
         }
 
-        return _pageCounts.GetValueOrDefault(pageNumber.ToString(), 0);
+        return _pageCounts.GetValueOrDefault(pageNumber, 0);
     }
 
     /// <summary>
@@ -118,7 +120,10 @@ public class DataTableContinuationTokenPaging
             throw new ArgumentException("recordCount must be non-negative", nameof(recordCount));
         }
 
-        _pageCounts[pageNumber.ToString()] = recordCount;
+        _pageCounts.TryGetValue(pageNumber, out int previousCount);
+        _pageCounts[pageNumber] = recordCount;
+        _knownRecords += recordCount - previousCount;
+        _maxPage = Math.Max(_maxPage, pageNumber);
     }
 
     /// <summary>
@@ -144,18 +149,8 @@ public class DataTableContinuationTokenPaging
             return _estimatedTotalRecords;
         }
 
-        // If we don't have an estimated total, calculate based on known pages
-        var knownRecords = 0;
-        int maxPage = -1;
-
-        foreach (KeyValuePair<string, int> kvp in _pageCounts)
-        {
-            if (int.TryParse(kvp.Key, out int pageNum))
-            {
-                knownRecords += kvp.Value;
-                maxPage = Math.Max(maxPage, pageNum);
-            }
-        }
+        int knownRecords = _knownRecords;
+        int maxPage = _maxPage;
 
         // If we have more pages, estimate the total
         if (_hasMorePages && maxPage >= 0)
@@ -231,6 +226,8 @@ public class DataTableContinuationTokenPaging
     {
         _pageTokens.Clear();
         _pageCounts.Clear();
+        _knownRecords = 0;
+        _maxPage = -1;
         _currentVirtualPage = 0;
         _estimatedTotalRecords = 0;
         _hasMorePages = true;
@@ -268,12 +265,7 @@ public class DataTableContinuationTokenPaging
         // Update estimated total if we have more data
         if (_hasMorePages)
         {
-            var knownRecords = 0;
-            foreach (int count in _pageCounts.Values)
-            {
-                knownRecords += count;
-            }
-            _estimatedTotalRecords = Math.Max(_estimatedTotalRecords, knownRecords + pageSize);
+            _estimatedTotalRecords = Math.Max(_estimatedTotalRecords, _knownRecords + pageSize);
         }
     }
 
@@ -308,7 +300,7 @@ public class DataTableContinuationTokenPaging
         }
 
         // If the requested page has a stored null token, return null
-        if (_pageTokens.ContainsKey(requestedPage.ToString()))
+        if (_pageTokens.ContainsKey(requestedPage))
         {
             return null;
         }
@@ -338,17 +330,15 @@ public class DataTableContinuationTokenPaging
         int closestPage = -1;
         var minDistance = int.MaxValue;
 
-        foreach (KeyValuePair<string, string> kvp in _pageTokens)
+        foreach (KeyValuePair<int, string> kvp in _pageTokens)
         {
-            if (int.TryParse(kvp.Key, out int pageNum))
+            int pageNum = kvp.Key;
+            int distance = Math.Abs(pageNum - requestedPage);
+
+            if (distance < minDistance || (distance == minDistance && pageNum < closestPage))
             {
-                int distance = Math.Abs(pageNum - requestedPage);
-                
-                if (distance < minDistance || (distance == minDistance && pageNum < closestPage))
-                {
-                    minDistance = distance;
-                    closestPage = pageNum;
-                }
+                minDistance = distance;
+                closestPage = pageNum;
             }
         }
 
