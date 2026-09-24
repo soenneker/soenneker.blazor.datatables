@@ -36,6 +36,6 @@
         <PackageReference Include="Microsoft.AspNetCore.Components" Version="10.0.12" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.12" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />
-        <PackageReference Include="Soenneker.DataTables.Dtos.ServerResponse" Version="4.0.25" />
+        <PackageReference Include="Soenneker.DataTables.Dtos.ServerResponse" Version="4.0.26" />
     </ItemGroup>
 </Project>
