@@ -33,6 +33,16 @@
 @code {
 
     [Inject]
+    private System.IServiceProvider JsonServices { get; set; } = null!;
+
+    private System.Text.Json.JsonSerializerOptions? _jsonOptions;
+
+    private System.Text.Json.Serialization.Metadata.JsonTypeInfo<T> GetJsonTypeInfo<T>() =>
+        (System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>)(_jsonOptions ??= LibraryJsonContext.WithContext(
+            JsonServices.GetService(typeof(System.Text.Json.Serialization.JsonSerializerContext)) as System.Text.Json.Serialization.JsonSerializerContext)).GetTypeInfo(typeof(T));
+
+
+    [Inject]
     private IDataTablesInterop DataTablesInterop { get; set; } = null!;
 
     [Inject]
@@ -218,7 +228,7 @@
 
         try
         {
-            var request = JsonUtil.Deserialize<DataTableServerSideRequest>(dataTablesRequestJson);
+            var request = JsonUtil.Deserialize(dataTablesRequestJson, GetJsonTypeInfo<DataTableServerSideRequest>());
 
             if (request == null)
                 return EmptyServerResponse(draw);
@@ -233,7 +243,7 @@
                 if (!Options.UseContinuationTokenPaging)
                 {
                     DataTableServerResponse offsetResult = await OnServerSideRequest(request);
-                    return JsonUtil.Serialize(offsetResult)!;
+                    return JsonUtil.Serialize(offsetResult, GetJsonTypeInfo<DataTableServerResponse>())!;
                 }
 
                 if (request.Length <= 0)
@@ -292,7 +302,7 @@
                     TotalFilteredRecords = result.TotalFilteredRecords > 0 ? result.TotalFilteredRecords : _pagingHelper.CalculateFilteredRecords()
                 };
 
-                return JsonUtil.Serialize(modifiedResult)!;
+                return JsonUtil.Serialize(modifiedResult, GetJsonTypeInfo<DataTableServerResponse>())!;
             }
 
             return EmptyServerResponse(draw);
@@ -307,10 +317,10 @@
     private static string Fingerprint(DataTableServerSideRequest request)
     {
         // anything that changes the result set must appear here
-        return $"{request.Search?.Value}|{request.Length}|{JsonUtil.Serialize(request.Order)}|{JsonUtil.Serialize(request.Columns)}";
+        return $"{request.Search?.Value}|{request.Length}|{JsonUtil.Serialize(request.Order, LibraryJsonContext.Get<List<DataTableOrderRequest>?>())}|{JsonUtil.Serialize(request.Columns, LibraryJsonContext.Get<List<DataTableColumnRequest>?>())}";
     }
 
-    private static string EmptyServerResponse(int draw, string? error = null)
+    private string EmptyServerResponse(int draw, string? error = null)
     {
         return JsonUtil.Serialize(new DataTableServerResponse
         {
@@ -319,7 +329,7 @@
             TotalRecords = 0,
             TotalFilteredRecords = 0,
             Error = error
-        })!;
+        }, GetJsonTypeInfo<DataTableServerResponse>())!;
     }
 
     /// <summary>

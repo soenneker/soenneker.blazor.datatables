@@ -1,3 +1,5 @@
+using Soenneker.DataTables.Dtos.ServerSideRequest;
+using Soenneker.DataTables.Dtos.ServerResponse;
 using Soenneker.Blazor.DataTables.Options;
 using System.Text.Json.Serialization.Metadata;
 using System.Text.Json.Serialization;
@@ -8,6 +10,8 @@ namespace Soenneker.Blazor.DataTables;
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull, ReadCommentHandling = JsonCommentHandling.Skip, UseStringEnumConverter = true)]
 [JsonSerializable(typeof(DataTableOptions))]
+[JsonSerializable(typeof(DataTableServerSideRequest))]
+[JsonSerializable(typeof(DataTableServerResponse))]
 [JsonSerializable(typeof(object))]
 [JsonSerializable(typeof(string))]
 [JsonSerializable(typeof(bool))]
