@@ -11,6 +11,7 @@ namespace Soenneker.Blazor.DataTables.Abstract;
 /// <summary>
 /// Provides JavaScript interop functionality for working with DataTables in Blazor.
 /// </summary>
+/// <remarks>Library DTOs use generated JSON metadata. Register an additional source-generated JsonSerializerContext for custom values inside object-typed properties; unknown CLR types are rejected.</remarks>
 public interface IDataTablesInterop : IEventListeningInterop, IAsyncDisposable
 {
     /// <summary>
