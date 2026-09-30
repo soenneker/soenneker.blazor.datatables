@@ -12,7 +12,7 @@ namespace Soenneker.Blazor.DataTables.Abstract;
 /// <summary>
 /// Defines the contract for a Blazor DataTable component with initialization, lifecycle management, and auto-render support.
 /// </summary>
-/// <remarks>Register a source-generated System.Text.Json.Serialization.JsonSerializerContext covering application-defined values in object-typed payloads. Unknown CLR types are rejected.</remarks>
+/// <remarks>Payloads use JsonUtil web JSON defaults, including application-defined values in object-typed payloads.</remarks>
 public interface IDataTable : ILeptonCancellableIdentifiableContentElement
 {
     /// <summary>
