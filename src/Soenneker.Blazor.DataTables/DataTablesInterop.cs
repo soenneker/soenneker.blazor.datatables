@@ -1,3 +1,6 @@
+using System.Text.Json.Serialization.Metadata;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Soenneker.Asyncs.Initializers;
@@ -18,6 +21,10 @@ namespace Soenneker.Blazor.DataTables;
 /// <inheritdoc cref="IDataTablesInterop"/>
 public sealed class DataTablesInterop : IDataTablesInterop
 {
+    private readonly JsonSerializerOptions _jsonOptions;
+
+    private JsonTypeInfo<T> GetJsonTypeInfo<T>() => (JsonTypeInfo<T>)_jsonOptions.GetTypeInfo(typeof(T));
+
 
 
     private const string _modulePath = "_content/Soenneker.Blazor.DataTables/js/datatablesinterop.js";
@@ -29,8 +36,9 @@ public sealed class DataTablesInterop : IDataTablesInterop
 
     private readonly CancellationScope _cancellationScope = new();
 
-    public DataTablesInterop(IResourceLoader resourceLoader, IModuleImportUtil moduleImportUtil)
+    public DataTablesInterop(IResourceLoader resourceLoader, IModuleImportUtil moduleImportUtil, JsonSerializerContext? jsonContext = null)
     {
+        _jsonOptions = LibraryJsonContext.WithContext(jsonContext);
         _resourceLoader = resourceLoader;
         _moduleImportUtil = moduleImportUtil;
         _scriptInitializer = new AsyncInitializer(InitializeScript);
@@ -81,7 +89,7 @@ public sealed class DataTablesInterop : IDataTablesInterop
             string? json = null;
 
             if (configuration != null)
-                json = JsonUtil.Serialize(configuration);
+                json = JsonUtil.Serialize(configuration, GetJsonTypeInfo<DataTableOptions>());
 
             IJSObjectReference module = await _moduleImportUtil.GetContentModuleReference(_modulePath, linked);
             await module.InvokeVoidAsync("create", linked, elementReference, elementId, json, dotNetObjectRef);
