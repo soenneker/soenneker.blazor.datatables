@@ -46,7 +46,7 @@
 
     <ItemGroup>
         <PackageReference Include="Soenneker.Asyncs.Initializers" Version="11.0.134" />
-        <PackageReference Include="Soenneker.Blazor.Utils.InteropEventListener" Version="11.0.4199" />
+        <PackageReference Include="Soenneker.Blazor.Utils.InteropEventListener" Version="11.0.4200" />
         <PackageReference Include="Soenneker.Blazor.Utils.ResourceLoader" Version="11.0.1800" />
         <PackageReference Include="Soenneker.DataTables.Dtos.Column" Version="11.0.39" />
         <PackageReference Include="Soenneker.DataTables.Dtos.ServerResponse" Version="11.0.36" />
