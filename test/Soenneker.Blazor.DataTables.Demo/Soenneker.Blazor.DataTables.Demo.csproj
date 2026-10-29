@@ -35,6 +35,6 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components" Version="11.0.0-rc.3.26522.148" />
-        <PackageReference Include="Soenneker.DataTables.Dtos.ServerResponse" Version="11.0.36" />
+        <PackageReference Include="Soenneker.DataTables.Dtos.ServerResponse" Version="11.0.37" />
     </ItemGroup>
 </Project>
