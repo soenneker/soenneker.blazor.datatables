@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Soenneker.Blazor.Extensions.IJSObjectReferences;
 using Soenneker.Asyncs.Initializers;
 using Soenneker.Blazor.DataTables.Abstract;
 using Soenneker.Blazor.DataTables.Options;
@@ -72,15 +73,8 @@ public sealed class DataTablesInterop : IDataTablesInterop
 
         using (source)
         {
-            try
-            {
-                IJSObjectReference module = await _moduleImportUtil.GetContentModuleReference(_modulePath, linked);
-                await module.InvokeVoidAsync("createObserver", linked, elementReference, elementId);
-            }
-            catch (JSException exception)
-            {
-                throw new JSException($"JavaScript operation 'DataTablesInterop.CreateObserver' failed: {exception.Message}", exception);
-            }
+            IJSObjectReference module = await _moduleImportUtil.GetContentModuleReference(_modulePath, linked);
+            await module.InvokeVoidWithContextAsync("createObserver", linked, elementReference, elementId);
         }
     }
 
@@ -91,22 +85,15 @@ public sealed class DataTablesInterop : IDataTablesInterop
 
         using (source)
         {
-            try
-            {
-                await Initialize(linked);
+            await Initialize(linked);
 
-                string? json = null;
+            string? json = null;
 
-                if (configuration != null)
-                    json = JsonUtil.Serialize(configuration, GetJsonTypeInfo<DataTableOptions>());
+            if (configuration != null)
+                json = JsonUtil.Serialize(configuration, GetJsonTypeInfo<DataTableOptions>());
 
-                IJSObjectReference module = await _moduleImportUtil.GetContentModuleReference(_modulePath, linked);
-                await module.InvokeVoidAsync("create", linked, elementReference, elementId, json, dotNetObjectRef);
-            }
-            catch (JSException exception)
-            {
-                throw new JSException($"JavaScript operation 'DataTablesInterop.Create' failed: {exception.Message}", exception);
-            }
+            IJSObjectReference module = await _moduleImportUtil.GetContentModuleReference(_modulePath, linked);
+            await module.InvokeVoidWithContextAsync("create", linked, elementReference, elementId, json, dotNetObjectRef);
         }
     }
 
@@ -116,15 +103,8 @@ public sealed class DataTablesInterop : IDataTablesInterop
 
         using (source)
         {
-            try
-            {
-                IJSObjectReference module = await _moduleImportUtil.GetContentModuleReference(_modulePath, linked);
-                await module.InvokeVoidAsync("destroy", linked, elementReference);
-            }
-            catch (JSException exception)
-            {
-                throw new JSException($"JavaScript operation 'DataTablesInterop.Destroy' failed: {exception.Message}", exception);
-            }
+            IJSObjectReference module = await _moduleImportUtil.GetContentModuleReference(_modulePath, linked);
+            await module.InvokeVoidWithContextAsync("destroy", linked, elementReference);
         }
     }
 
@@ -134,15 +114,8 @@ public sealed class DataTablesInterop : IDataTablesInterop
 
         using (source)
         {
-            try
-            {
-                IJSObjectReference module = await _moduleImportUtil.GetContentModuleReference(_modulePath, linked);
-                await module.InvokeVoidAsync("refresh", linked, elementId);
-            }
-            catch (JSException exception)
-            {
-                throw new JSException($"JavaScript operation 'DataTablesInterop.Refresh' failed: {exception.Message}", exception);
-            }
+            IJSObjectReference module = await _moduleImportUtil.GetContentModuleReference(_modulePath, linked);
+            await module.InvokeVoidWithContextAsync("refresh", linked, elementId);
         }
     }
 
@@ -162,16 +135,9 @@ public sealed class DataTablesInterop : IDataTablesInterop
 
         using (source)
         {
-            try
-            {
-                IJSObjectReference module = await _moduleImportUtil.GetContentModuleReference(_modulePath, linked);
-                string identifier = functionName.Replace("DataTablesInterop.", "", StringComparison.Ordinal);
-                await module.InvokeVoidAsync(identifier, linked, elementId, eventName, dotNetCallback);
-            }
-            catch (JSException exception)
-            {
-                throw new JSException($"JavaScript operation 'DataTablesInterop.AddEventListener' failed: {exception.Message}", exception);
-            }
+            IJSObjectReference module = await _moduleImportUtil.GetContentModuleReference(_modulePath, linked);
+            string identifier = functionName.Replace("DataTablesInterop.", "", StringComparison.Ordinal);
+            await module.InvokeVoidWithContextAsync(identifier, linked, elementId, eventName, dotNetCallback);
         }
     }
 
