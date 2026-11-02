@@ -28,7 +28,7 @@ public sealed class DataTablesInterop : IDataTablesInterop
 
 
 
-    private const string _modulePath = "_content/Soenneker.Blazor.DataTables/js/datatablesinterop.js";
+    private const string _modulePath = "_content/Soenneker.Blazor.DataTables/js/datatablesinterop.min.js";
 
     private readonly IResourceLoader _resourceLoader;
     private readonly IModuleImportUtil _moduleImportUtil;
